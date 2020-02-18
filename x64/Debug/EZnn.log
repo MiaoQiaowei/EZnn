@@ -1,11 +1,7 @@
-﻿生成启动时间为 2020/2/18 16:55:14。
+﻿生成启动时间为 2020/2/18 19:14:53。
      1>项目“D:\github\EZnn\EZnn\EZnn.vcxproj”在节点 2 上(Build 个目标)。
      1>ClCompile:
-         D:\vs13\VC\bin\x86_amd64\CL.exe /c /ID:\github\EZnn\EZnn\include\json /ID:\github\EZnn\EZnn\include /Zi /nologo /W3 /WX- /Od /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"x64\Debug\\" /Fd"x64\Debug\vc120.pdb" /Gd /TP /errorReport:prompt main.cpp myBlob.cpp myLayer.cpp myNet.cpp
-         myNet.cpp
-     1>myNet.cpp(14): warning C4996: 'Json::Reader::Reader': Use CharReader and CharReaderBuilder instead
-                 d:\github\eznn\eznn\include\json\reader.h(56) : 参见“Json::Reader::Reader”的声明
-         myLayer.cpp
+         D:\vs13\VC\bin\x86_amd64\CL.exe /c /ID:\github\EZnn\EZnn\include\json /ID:\github\EZnn\EZnn\include /Zi /nologo /W3 /WX- /Od /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"x64\Debug\\" /Fd"x64\Debug\vc120.pdb" /Gd /TP /errorReport:prompt main.cpp myBlob.cpp
          myBlob.cpp
          main.cpp
          正在生成代码...
@@ -22,4 +18,4 @@
 
 生成成功。
 
-已用时间 00:00:04.11
+已用时间 00:00:05.45

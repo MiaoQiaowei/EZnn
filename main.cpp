@@ -1,4 +1,5 @@
 #include "myNet.hpp"
+#include "myBlob.hpp"
 #include <iostream>
 #include <string>
 
@@ -23,6 +24,10 @@ int main(int argc, char** argv)
 	{
 		cout << "layer = " << layers_[i] << " ; " << "ltype = " << ltypes_[i] << endl;
 	}
+
+	//实例化一个blob对象
+	Blob test_blob(2, 3, 5, 5, TONES);
+	test_blob.print();
 
 	system("pause");
 
