@@ -3,8 +3,10 @@
 #include <iostream>
 #include <string>
 #include <memory>
+#include "Mnist.h"
 
 using namespace std;
+/*
 
 //minist 读取操作
 int ReverseInt(int i)  ////把大端数据转换为我们常用的小端数据 （大小端模式的原因）
@@ -95,11 +97,13 @@ void ReadMnistLabel(string path, shared_ptr<Blob> &labels)
 		cout << "no label file found :-(" << endl;
 	}
 }
-
+*/
 
 int main(int argc, char** argv)
 {
+	/*
 	string configFile = "./Model.json";
+
 	NetParam net_param;
 	//1.读取myModel.json到内存中
 	net_param.readNetParam(configFile);
@@ -122,7 +126,7 @@ int main(int argc, char** argv)
 	//实例化两个Blob对象
 	shared_ptr<Blob> images (new Blob(60000, 1, 28, 28, TONES));
 	shared_ptr<Blob> labels(new Blob(60000, 10, 1, 1, TONES));
-
+	//数据路径
 	ReadMnistData("D:\\github\\EZnn\\Minist\\train\\train-images.idx3-ubyte", images);
 	ReadMnistLabel("D:\\github\\EZnn\\Minist\\train\\train-labels.idx1-ubyte", labels);
 
@@ -136,5 +140,20 @@ int main(int argc, char** argv)
 	}
 
 	system("pause");
+	*/
+	string ModelPath = "./Model.json";
+	string imagesPath = "D:\\github\\EZnn\\Minist\\train\\train-images.idx3-ubyte";
+	string labelsPath = "D:\\github\\EZnn\\Minist\\train\\train-labels.idx1-ubyte";
+	Mnist mnist(imagesPath, labelsPath, ModelPath);
+	mnist.JsonTest();//
+	mnist.MnistTest();
+	vector<cube>&imagesList = mnist.images->get_data();
+	vector<cube>&labesList = mnist.images->get_data();
+
+	for (int i = 0; i < 3; i++)
+	{
+		imagesList[i].print("images:");
+		labesList[i].print("labels");
+	}
 
 }

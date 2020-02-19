@@ -1,5 +1,5 @@
-#ifndef  __MYLAYER_HPP__
-#define __MYLAYER_HPP__
+#ifndef  __LAYER_HPP__
+#define __LAYER_HPP__
 #include <iostream>
 
 struct Param  //结构体 （层参数，主要是每一层的细节部分）
@@ -24,4 +24,4 @@ struct Param  //结构体 （层参数，主要是每一层的细节部分）
 
 
 
-#endif  //__MYLAYER_HPP__
+#endif  //__LAYER_HPP__

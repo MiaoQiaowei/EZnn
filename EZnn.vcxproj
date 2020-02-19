@@ -146,11 +146,13 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Blob.cpp" />
     <ClCompile Include="Layer.cpp" />
+    <ClCompile Include="Mnist.cpp" />
     <ClCompile Include="Net.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Blob.hpp" />
     <ClInclude Include="Layer.hpp" />
+    <ClInclude Include="Mnist.h" />
     <ClInclude Include="Net.hpp" />
   </ItemGroup>
   <ItemGroup>

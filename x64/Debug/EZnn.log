@@ -1,4 +1,6 @@
-﻿  Blob.cpp
+﻿  main.cpp
+  Mnist.cpp
+  正在生成代码...
 lib_json.lib(json_reader.obj) : warning LNK4099: 未找到 PDB“vc120.pdb”(使用“lib_json.lib(json_reader.obj)”或在“D:\github\EZnn\x64\Debug\vc120.pdb”中寻找)；正在链接对象，如同没有调试信息一样
 lib_json.lib(json_value.obj) : warning LNK4099: 未找到 PDB“vc120.pdb”(使用“lib_json.lib(json_value.obj)”或在“D:\github\EZnn\x64\Debug\vc120.pdb”中寻找)；正在链接对象，如同没有调试信息一样
 lib_json.lib(json_writer.obj) : warning LNK4099: 未找到 PDB“vc120.pdb”(使用“lib_json.lib(json_writer.obj)”或在“D:\github\EZnn\x64\Debug\vc120.pdb”中寻找)；正在链接对象，如同没有调试信息一样
