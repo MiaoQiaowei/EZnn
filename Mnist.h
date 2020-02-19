@@ -1,6 +1,5 @@
 #ifndef  __Mnist_HPP__
 #define __Mnist_HPP__
-
 #include "Net.hpp"
 #include "Blob.hpp"
 #include <iostream>
