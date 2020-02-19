@@ -6,6 +6,13 @@ using std::vector;
 using arma::cube;
 using std::string;
 
+/*
+Blob是数据流，他的作用是将数据集全部读入到内存当中。
+Blob（   n   ，  c  ，h，w ）
+     (样本数目，通道数，高，宽)
+Blob整体是由一个名为Blob的cube类型的vector数组存储
+*/
+
 enum FillType
 {
 
@@ -23,19 +30,19 @@ enum FillType
 class Blob
 {
 public: //构造函数：这个类通过调用构造函数来实例化对象
-	Blob() : N_(0), C_(0), H_(0), W_(0)
+	Blob() : n(0), c(0), h(0), w(0)
 	{}
 	Blob(const int n, const int c, const int h, const int w, int type = TDEFAULT);  //重载函数
-	vector<cube> &get_data();
+	vector<cube> &GetData();
 	cube & operator[](int index);
-	void print(string str = "");
+	void Print(string str = "");
 private:
-	void _init(const int n, const int c, const int h, const int w, int type);
+	void Init(const int n, const int c, const int h, const int w, int type);
 private:
-	int N_;
-	int C_;
-	int H_;
-	int W_;
+	int n;
+	int c;
+	int h;
+	int w;
 	vector<cube> blob_data;
 	
 };

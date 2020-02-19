@@ -5,17 +5,27 @@
 
 using namespace std;
 
-Mnist::Mnist(string imagesPath, string labelsPath, string JsonPath)
+Mnist::Mnist(string images_path, string labels_path, string json_path)
 {
-	this->imagesPath = imagesPath;
-	this->labelsPath = labelsPath;
-	this->JsonPath = JsonPath;
+	this->images_path = images_path;
+	this->labels_path = labels_path;
+	this->json_path = json_path;
 }
 
 Mnist::~Mnist()
 {
 	delete(this->images);
 	delete(this->labels);
+}
+
+Blob* Mnist::GetImages()
+{
+	return this->images;
+}
+
+Blob* Mnist::GetLabels()
+{
+	return this->labels;
 }
 
 int Mnist::ReverseInt(int i)  ////把大端数据转换为我们常用的小端数据 （大小端模式的原因）
@@ -113,8 +123,8 @@ void Mnist::MnistTest()
 	Blob* images(new Blob(60000, 1, 28, 28, TONES));
 	Blob* labels(new Blob(60000, 10, 1, 1, TONES));
 	//数据路径
-	ReadMnistData(this->imagesPath, images);
-	ReadMnistLabel(this->labelsPath, labels);
+	ReadMnistData(this->images_path, images);
+	ReadMnistLabel(this->labels_path, labels);
 
 	this->images = images;
 	this->labels = labels;
@@ -122,13 +132,13 @@ void Mnist::MnistTest()
 
 void Mnist::JsonTest()
 {
-	this->net.readNetParam(this->JsonPath);
-	this->layers_ = this->net.layers;
-	this->ltypes_ = this->net.ltypes;
+	this->net.readNetParam(this->json_path);
+	this->layers = this->net.layers;
+	this->ltypes = this->net.ltypes;
 	cout << "Json info:" << endl;
-	for (int i = 0; i < layers_.size(); ++i)
+	for (int i = 0; i < layers.size(); ++i)
 	{
-		cout << "layer = " << layers_[i] << " ; " << "ltype = " << ltypes_[i] << endl;
+		cout << "layer = " << layers[i] << " ; " << "ltype = " << ltypes[i] << endl;
 	}
 	cout << "Json is ok!" << endl;
 }

@@ -16,8 +16,8 @@ int main(int argc, char** argv)
 	mnist.JsonTest();//测试模型状态
 	mnist.MnistTest();//读取数据
 	//输出三组数据进行展示
-	vector<cube>&imagesList = mnist.images->get_data();
-	vector<cube>&labesList = mnist.images->get_data();
+	vector<cube>&imagesList = mnist.GetImages()->GetData();
+	vector<cube>&labesList = mnist.GetLabels()->GetData();
 	for (int i = 0; i < 3; i++)
 	{
 		imagesList[i].print("images:");

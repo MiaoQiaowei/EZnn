@@ -4,14 +4,14 @@ using namespace std;
 using namespace arma;
 
 
-Blob::Blob(const int n, const int c, const int h, const int w, int type) : N_(n), C_(c), H_(h), W_(w)
+Blob::Blob(const int n, const int c, const int h, const int w, int type) : n(n), c(c), h(h), w(w)
 {
 	arma_rng::set_seed_random();  //系统随机生成种子(如果没有这一句，就会每次启动程序(进程)时都默认从种子1开始来生成随机数！
-	_init(N_, C_, H_, W_, type);
+	Init(n, c, h, w, type);
 
 }
 
-void Blob::_init(const int n, const int c, const int h, const int w, int type)
+void Blob::Init(const int n, const int c, const int h, const int w, int type)
 {
 
 	if (type == TONES)
@@ -44,11 +44,11 @@ void Blob::_init(const int n, const int c, const int h, const int w, int type)
 
 }
 
-void Blob::print(string str)
+void Blob::Print(string str)
 {
 	assert(!blob_data.empty());  //断言：   blob_data不为空！否则中止程序
 	cout << str << endl;
-	for (int i = 0; i < N_; ++i)  //N_为blob_data中cube个数
+	for (int i = 0; i < n; ++i)  //N_为blob_data中cube个数
 	{
 		printf("N = %d\n", i);
 		this->blob_data[i].print();//逐一打印cube，调用cube中重载好的print()
@@ -56,7 +56,7 @@ void Blob::print(string str)
 }
 
 
-vector<cube> &Blob::get_data()
+vector<cube> &Blob::GetData()
 {
 	return Blob::blob_data;
 }

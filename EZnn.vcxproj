@@ -146,6 +146,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Blob.cpp" />
     <ClCompile Include="Layer.cpp" />
+    <ClCompile Include="mainCopy.cpp" />
     <ClCompile Include="Mnist.cpp" />
     <ClCompile Include="Net.cpp" />
   </ItemGroup>

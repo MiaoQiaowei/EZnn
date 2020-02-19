@@ -13,21 +13,22 @@ using std::string;
 class Mnist
 {
 public:
-	string imagesPath;
-	string labelsPath;
-	string JsonPath;
-	NetParam net;
-	vector<string> layers_;
-	vector<string> ltypes_;
-	Blob* images;
-	Blob* labels;
-
-	Mnist(string imagesPath,string labelsPath, string JsonPath);
+	Mnist(string images_path,string labels_path, string json_path);
 	~Mnist();
 	void MnistTest();
 	void JsonTest();
+	Blob* GetImages();
+	Blob* GetLabels();
 
 private:
+	string images_path;
+	string labels_path;
+	string json_path;
+	NetParam net;
+	vector<string> layers;
+	vector<string> ltypes;
+	Blob* images;
+	Blob* labels;
 	int  ReverseInt(int i);
 	void ReadMnistData(string path, Blob* &images);
 	void ReadMnistLabel(string path, Blob* &labels);
