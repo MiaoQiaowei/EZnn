@@ -1,4 +1,4 @@
-#include "myBlob.hpp"
+#include "Blob.hpp"
 #include "cassert"
 using namespace std;
 using namespace arma;
@@ -53,4 +53,15 @@ void Blob::print(string str)
 		printf("N = %d\n", i);
 		this->blob_data[i].print();//逐一打印cube，调用cube中重载好的print()
 	}
+}
+
+
+vector<cube> Blob::get_data()
+{
+	return Blob::blob_data;
+}
+
+cube & Blob::operator[](int index)
+{
+	return Blob::blob_data[index];
 }

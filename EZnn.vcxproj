@@ -144,17 +144,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="myBlob.cpp" />
-    <ClCompile Include="myLayer.cpp" />
-    <ClCompile Include="myNet.cpp" />
+    <ClCompile Include="Blob.cpp" />
+    <ClCompile Include="Layer.cpp" />
+    <ClCompile Include="Net.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="myBlob.hpp" />
-    <ClInclude Include="myLayer.hpp" />
-    <ClInclude Include="myNet.hpp" />
+    <ClInclude Include="Blob.hpp" />
+    <ClInclude Include="Layer.hpp" />
+    <ClInclude Include="Net.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="myModel.json" />
+    <None Include="Model.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

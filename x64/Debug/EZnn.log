@@ -1,21 +1,5 @@
-﻿生成启动时间为 2020/2/18 19:14:53。
-     1>项目“D:\github\EZnn\EZnn\EZnn.vcxproj”在节点 2 上(Build 个目标)。
-     1>ClCompile:
-         D:\vs13\VC\bin\x86_amd64\CL.exe /c /ID:\github\EZnn\EZnn\include\json /ID:\github\EZnn\EZnn\include /Zi /nologo /W3 /WX- /Od /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"x64\Debug\\" /Fd"x64\Debug\vc120.pdb" /Gd /TP /errorReport:prompt main.cpp myBlob.cpp
-         myBlob.cpp
-         main.cpp
-         正在生成代码...
-       Link:
-         D:\vs13\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"D:\github\EZnn\x64\Debug\EZnn.exe" /INCREMENTAL /NOLOGO /LIBPATH:D:\github\EZnn\EZnn\x64_lib lib_json.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:\github\EZnn\x64\Debug\EZnn.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\github\EZnn\x64\Debug\EZnn.lib" /MACHINE:X64 x64\Debug\main.obj
-         x64\Debug\myBlob.obj
-         x64\Debug\myLayer.obj
-         x64\Debug\myNet.obj
-     1>lib_json.lib(json_reader.obj) : warning LNK4099: 未找到 PDB“vc120.pdb”(使用“lib_json.lib(json_reader.obj)”或在“D:\github\EZnn\x64\Debug\vc120.pdb”中寻找)；正在链接对象，如同没有调试信息一样
-     1>lib_json.lib(json_value.obj) : warning LNK4099: 未找到 PDB“vc120.pdb”(使用“lib_json.lib(json_value.obj)”或在“D:\github\EZnn\x64\Debug\vc120.pdb”中寻找)；正在链接对象，如同没有调试信息一样
-     1>lib_json.lib(json_writer.obj) : warning LNK4099: 未找到 PDB“vc120.pdb”(使用“lib_json.lib(json_writer.obj)”或在“D:\github\EZnn\x64\Debug\vc120.pdb”中寻找)；正在链接对象，如同没有调试信息一样
-         EZnn.vcxproj -> D:\github\EZnn\x64\Debug\EZnn.exe
-     1>已完成生成项目“D:\github\EZnn\EZnn\EZnn.vcxproj”(Build 个目标)的操作。
+﻿生成启动时间为 2020/2/19 9:33:00。
 
 生成成功。
 
-已用时间 00:00:05.45
+已用时间 00:00:00.23

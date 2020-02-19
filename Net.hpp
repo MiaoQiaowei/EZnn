@@ -1,6 +1,6 @@
-#ifndef __MYNET_HPP__
-#define __MYNET_HPP__
-#include "myLayer.hpp"
+#ifndef __NET_HPP__
+#define __NET_HPP__
+#include "Layer.hpp"
 #include <iostream>
 #include <vector>
 #include <unordered_map>
