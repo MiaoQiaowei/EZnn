@@ -31,6 +31,12 @@ Protobuf 2.5.0
 
 OpenCV
 
+## 数据集：
+
+Mnist数据集：
+
+链接：https://pan.baidu.com/s/1VRM0Z-H-9psr4Nob19_UAA    提取码：4rvg 
+
 ## 联系：
 
 Email: QiaoweiMiao@gmail.com
