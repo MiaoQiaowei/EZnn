@@ -26,12 +26,11 @@ public: //构造函数：这个类通过调用构造函数来实例化对象
 	Blob() : N_(0), C_(0), H_(0), W_(0)
 	{}
 	Blob(const int n, const int c, const int h, const int w, int type = TDEFAULT);  //重载函数
-
+	vector<cube> &get_data();
+	cube & operator[](int index);
 	void print(string str = "");
 private:
 	void _init(const int n, const int c, const int h, const int w, int type);
-	vector<cube> get_data();
-	cube & operator[](int index);
 private:
 	int N_;
 	int C_;

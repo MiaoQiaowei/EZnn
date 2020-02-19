@@ -121,10 +121,19 @@ int main(int argc, char** argv)
 
 	//实例化两个Blob对象
 	shared_ptr<Blob> images (new Blob(60000, 1, 28, 28, TONES));
-	shared_ptr<Blob> labes(new Blob(60000, 10, 1, 1, TONES));
+	shared_ptr<Blob> labels(new Blob(60000, 10, 1, 1, TONES));
 
-	
+	ReadMnistData("D:\\github\\EZnn\\Minist\\train\\train-images.idx3-ubyte", images);
+	ReadMnistLabel("D:\\github\\EZnn\\Minist\\train\\train-labels.idx1-ubyte", labels);
 
+	vector<cube>&imagesList = images->get_data();
+	vector<cube>&labesList = labels->get_data();
+
+	for (int i = 0; i < 3; i++)
+	{
+		imagesList[i].print("images:");
+		labesList[i].print("labels");
+	}
 
 	system("pause");
 

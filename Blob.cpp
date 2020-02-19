@@ -56,7 +56,7 @@ void Blob::print(string str)
 }
 
 
-vector<cube> Blob::get_data()
+vector<cube> &Blob::get_data()
 {
 	return Blob::blob_data;
 }

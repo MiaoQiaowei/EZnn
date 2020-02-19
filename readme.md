@@ -5,51 +5,37 @@ EZnn是我自己开发的一套深度学习框架。底层由C++实现，将逐�
 ## 	 进度
 
 - [x] 利用JSON定义网络结构
-
 - [x] 设计Blob结构
-
 - [ ] 加载Minist数据集进行测试
-
 - [ ] 构造数据和梯度流
-
 - [ ] 逐层初始化
-
 - [ ] Blob切割成Batch
-
 - [ ] 前向传播
-
 - [ ] 反向传播
-
 - [ ] 模型参数优化
-
 - [ ] 优化模型
-
 - [ ] 自动求导
-
 - [ ] 编译成静态库
-
 - [ ] 支持GPU训练
-
 - [ ] 设计图形界面
 
-  
+## 配置需要：
 
-  ## 配置需要：
+VS2013（如果使用更新的VS，请在安装新版本VS之后再安装VS2013，以确保包含v120工作集）
 
-  VS2013
+JSON
 
-  JSON
+Armadillo
 
-  Armadillo
+Protobuf 2.5.0
 
-  Protobuf 2.5.0
+OpenCV
 
-  OpenCV
+## 联系：
 
-  
+Email: QiaoweiMiao@gmail.com
 
-  Email: QiaoweiMiao@gmail.com
+QQ: 252544058
 
-  QQ: 252544058
 
-  
+
