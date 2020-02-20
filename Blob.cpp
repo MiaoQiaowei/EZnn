@@ -55,7 +55,6 @@ void Blob::Print(string str)
 	}
 }
 
-
 vector<cube> &Blob::GetData()
 {
 	return Blob::blob_data;
@@ -66,7 +65,7 @@ cube & Blob::operator[](int index)
 	return Blob::blob_data[index];
 }
 
-Blob Blob::subBlob(int low_index, int high_index)
+Blob Blob::SubBlob(int low_index, int high_index)
 {
 	
 	if (low_index <= high_index)
@@ -91,4 +90,19 @@ Blob Blob::subBlob(int low_index, int high_index)
 		}
 		return temp;
 	}
+}
+
+int Blob::GetC() 
+{
+	return c;
+}
+
+int Blob::GetH() 
+{
+	return h;
+}
+
+int Blob::GetW() 
+{
+	return w;
 }

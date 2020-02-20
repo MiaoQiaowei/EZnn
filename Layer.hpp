@@ -1,8 +1,15 @@
 #ifndef  __LAYER_HPP__
 #define __LAYER_HPP__
 #include <iostream>
+#include <vector>
+#include <memory>
+#include "Blob.hpp"
 
-struct Param  //结构体 （层参数，主要是每一层的细节部分）
+using std::vector;
+using std::shared_ptr;
+
+
+struct LayerParam  //结构体 （层参数，主要是每一层的细节部分）
 {
 	/*1.卷积层超参数 */
 	int conv_stride;
@@ -20,23 +27,45 @@ struct Param  //结构体 （层参数，主要是每一层的细节部分）
 	int fc_kernels;
 };
 
+
 class Layer
 {
 public:
-	//Layer();
-	//virtual ~Layer();
-	virtual void Init() = 0;
+	Layer() {};
+	~Layer() {};
+	virtual	void Init(const vector<int>&input_shape, const vector<shared_ptr<Blob>>&data, LayerParam param, const string name) {};
 
 private:
 
 };
 
-
 class Conv:public Layer
 {
 public:
-	void Init();
+	Conv() {};
+	~Conv() {};
+	void Init(const vector<int>&input_shape, const vector<shared_ptr<Blob>>&data, LayerParam param, const string name);
+private:
 
+};
+
+class Relu :public Layer
+{
+public:
+	Relu() {};
+	~Relu() {};
+	void Init(const vector<int>&input_shape, const vector<shared_ptr<Blob>>&data, LayerParam param, const string name);
+private:
+
+};
+
+
+class Fc :public Layer
+{
+public:
+	Fc() {};
+	~Fc() {};
+	void Init(const vector<int>&input_shape, const vector<shared_ptr<Blob>>&data, LayerParam param, const string name);
 private:
 
 };
@@ -44,30 +73,11 @@ private:
 class Pool :public Layer
 {
 public:
-	void Init();
-
+	Pool() {};
+	~Pool() {};
+	void Init(const vector<int>&input_shape, const vector<shared_ptr<Blob>>&data, LayerParam param, const string name);
 private:
 
 };
-class Relu :public Layer
-{
-public:
-	void Init();
-
-private:
-
-};
-
-class Fc :public Layer
-{
-public:
-	void Init();
-
-private:
-
-};
-
-
-
 
 #endif  //__LAYER_HPP__

@@ -39,7 +39,7 @@ void NetParam::readNetParam(string file)
 			{
 				auto &ii = nparam[i];                                   //通过引用方式，拿到当前对象里面的所有元素
 				this->layers.push_back(ii["name"].asString());          //往层名vector中堆叠名称      a=[]   a.append()
-				this->ltypes.push_back(ii["type"].asString());          //往层类型vector中堆叠类型
+				this->layer_types.push_back(ii["type"].asString());          //往层类型vector中堆叠类型
 
 				if (ii["type"].asString() == "Conv")
 				{
@@ -49,25 +49,25 @@ void NetParam::readNetParam(string file)
 					int pad = ii["pad"].asInt();
 					int stride = ii["stride"].asInt();
 
-					this->lparams[ii["name"].asString()].conv_stride = stride;
-					this->lparams[ii["name"].asString()].conv_kernels = num;
-					this->lparams[ii["name"].asString()].conv_pad = pad;
-					this->lparams[ii["name"].asString()].conv_width = width;
-					this->lparams[ii["name"].asString()].conv_height = height;
+					this->layer_params[ii["name"].asString()].conv_stride = stride;
+					this->layer_params[ii["name"].asString()].conv_kernels = num;
+					this->layer_params[ii["name"].asString()].conv_pad = pad;
+					this->layer_params[ii["name"].asString()].conv_width = width;
+					this->layer_params[ii["name"].asString()].conv_height = height;
 				}
 				if (ii["type"].asString() == "Pool")
 				{
 					int width = ii["kernel width"].asInt();
 					int height = ii["kernel height"].asInt();
 					int stride = ii["stride"].asInt();
-					this->lparams[ii["name"].asString()].pool_stride = stride;
-					this->lparams[ii["name"].asString()].pool_width = width;
-					this->lparams[ii["name"].asString()].pool_height = height;
+					this->layer_params[ii["name"].asString()].pool_stride = stride;
+					this->layer_params[ii["name"].asString()].pool_width = width;
+					this->layer_params[ii["name"].asString()].pool_height = height;
 				}
 				if (ii["type"].asString() == "Fc")
 				{
 					int num = ii["kernel num"].asInt();
-					this->lparams[ii["name"].asString()].fc_kernels = num;
+					this->layer_params[ii["name"].asString()].fc_kernels = num;
 				}
 			}
 		}
@@ -76,10 +76,10 @@ void NetParam::readNetParam(string file)
 
 Net::Net(){}
 
-void Net::Init(NetParam &net, vector<shared_ptr<Blob>> &train, vector<shared_ptr<Blob>> &val)
+void Net::Init(NetParam &net_param, vector<shared_ptr<Blob>> &train, vector<shared_ptr<Blob>> &val)
 {
-	layer_names = net.layers;
-	layer_types = net.ltypes;
+	layer_names = net_param.layers;
+	layer_types = net_param.layer_types;
 	for (int i = 0; i < layer_names.size(); i++)
 	{
 		cout << "layer = " << layer_names[i] << " type = " << layer_types[i] << endl;
@@ -90,19 +90,27 @@ void Net::Init(NetParam &net, vector<shared_ptr<Blob>> &train, vector<shared_ptr
 	images_val = val[0];
 	labels_val = val[1];
 
-	for (int i = 0; i < layer_names.size()-1; i++)
+	for (int i = 0; i < (int)layer_names.size(); ++i)   //遍历每一层
+	{
+		data[layer_names[i]] = vector<shared_ptr<Blob>>(3, NULL);    //为每一层创建前向计算要用到的3个Blob
+		diff[layer_names[i]] = vector<shared_ptr<Blob>>(3, NULL);      //为每一层创建反向计算要用到的3个Blob
+	}
+
+	shared_ptr<Layer> p_Layer;
+	vector<int>input_shape = {
+			net_param.batch_size,
+			images_train->GetC(),
+			images_train->GetH(),
+			images_train->GetW(),
+	};
+	//打印shape
+	cout << "input size:"  << " ( " << input_shape[0] << " , " << input_shape[1] << " , " << input_shape[2] << " , " << input_shape[3] << " )" << endl;
+
+	for (int i = 0; i < (int)layer_names.size()-1; i++)
 	{
 		string name= layer_names[i];
 		string type=layer_types[i];
-		shared_ptr<Layer> p_Layer;
-		/*
-		vector<int>input_shape = {
-			net.batch_size,
-			train->GetC(),
-			train->GetH(),
-			train->GetW(),
-		}*/
-		
+
 		if (type == "Conv")
 		{
 			p_Layer.reset(new Conv);
@@ -120,6 +128,6 @@ void Net::Init(NetParam &net, vector<shared_ptr<Blob>> &train, vector<shared_ptr
 			p_Layer.reset(new Relu);
 		}
 		p_layers[name] = p_Layer; 
-		p_Layer->Init();
+		p_Layer->Init(input_shape,data[name], net_param.layer_params[name],name);
 	}
 }

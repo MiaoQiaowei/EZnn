@@ -26,9 +26,9 @@ private:
 	string images_path;
 	string labels_path;
 	string json_path;
-	NetParam net;
+	NetParam net_param;
 	vector<string> layers;
-	vector<string> ltypes;
+	vector<string> layer_types;
 	Blob* images;
 	Blob* labels;
 	int  ReverseInt(int i);

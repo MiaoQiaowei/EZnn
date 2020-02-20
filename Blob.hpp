@@ -30,14 +30,16 @@ enum FillType
 class Blob
 {
 public: //构造函数：这个类通过调用构造函数来实例化对象
-	Blob() : n(0), c(0), w(0), h(0)
-	{}
+	Blob() : n(0), c(0), w(0), h(0){}
 	Blob(const int n, const int c, const int w, const int h, int type = TDEFAULT);  //重载函数
 	vector<cube> &GetData();
 	cube & operator[](int index);
 	void Print(string str = "");
-	Blob subBlob(int low_index, int high_index);
+	Blob SubBlob(int low_index, int high_index);
 	void Init(const int n, const int c, const int w, const int h, int type);
+	int GetC();
+	int GetH();
+	int GetW();
 private:
 	int n;
 	int c;

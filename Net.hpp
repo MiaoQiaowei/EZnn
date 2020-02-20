@@ -43,9 +43,9 @@ struct NetParam      //c++ÖĞ£¬struct¸úclassÓÃ·¨»ù±¾Ò»ÖÂ£¡Ö÷ÒªÇø±ğÊÇ¼Ì³ĞºóµÄÊı¾İ·
 	/*²ãÃû*/
 	vector <string> layers;
 	/*²ãÀàĞÍ*/
-	vector <string> ltypes;
+	vector <string> layer_types;
 	/*ÎŞĞò¹ØÁªÈİÆ÷*/
-	unordered_map<string, Param> lparams;
+	unordered_map<string, LayerParam> layer_params;
 	void readNetParam(string file);
 };
 
