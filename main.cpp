@@ -13,8 +13,9 @@ int main(int argc, char** argv)
 	string imagesPath = "D:\\github\\EZnn\\Mnist\\train\\train-images.idx3-ubyte";
 	string labelsPath = "D:\\github\\EZnn\\Mnist\\train\\train-labels.idx1-ubyte";
 	Mnist mnist(imagesPath, labelsPath, ModelPath);
-	mnist.JsonTest();//测试模型状态
-	mnist.MnistTest();//读取数据
+	//mnist.JsonTest();//测试模型状态
+	//mnist.MnistTest();//读取数据
+	/*
 	//输出三组数据进行展示
 	vector<cube>&imagesList = mnist.GetImages()->GetData();
 	vector<cube>&labesList = mnist.GetLabels()->GetData();
@@ -23,5 +24,6 @@ int main(int argc, char** argv)
 		imagesList[i].print("images:");
 		labesList[i].print("labels");
 	}
-
+	*/
+	mnist.Train();
 }

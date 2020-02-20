@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <memory>
+#include "Net.hpp"
 
 using namespace std;
 
@@ -10,6 +11,15 @@ Mnist::Mnist(string images_path, string labels_path, string json_path)
 	this->images_path = images_path;
 	this->labels_path = labels_path;
 	this->json_path = json_path;
+	//实例化两个Blob对象
+	Blob* images(new Blob(60000, 1, 28, 28, TONES));
+	Blob* labels(new Blob(60000, 10, 1, 1, TONES));
+	//数据路径
+	ReadMnistData(this->images_path, images);
+	ReadMnistLabel(this->labels_path, labels);
+
+	this->images = images;
+	this->labels = labels;
 }
 
 Mnist::~Mnist()
@@ -117,19 +127,6 @@ void Mnist::ReadMnistLabel(string path, Blob* &labels)
 	}
 }
 
-void Mnist::MnistTest()
-{
-	//实例化两个Blob对象
-	Blob* images(new Blob(60000, 1, 28, 28, TONES));
-	Blob* labels(new Blob(60000, 10, 1, 1, TONES));
-	//数据路径
-	ReadMnistData(this->images_path, images);
-	ReadMnistLabel(this->labels_path, labels);
-
-	this->images = images;
-	this->labels = labels;
-}
-
 void Mnist::JsonTest()
 {
 	this->net.readNetParam(this->json_path);
@@ -141,4 +138,45 @@ void Mnist::JsonTest()
 		cout << "layer = " << layers[i] << " ; " << "ltype = " << ltypes[i] << endl;
 	}
 	cout << "Json is ok!" << endl;
+}
+
+void Mnist::Train(string config_file, shared_ptr<Blob> images, shared_ptr<Blob> labels)
+{
+	//0.读入并解析网络
+	net.readNetParam(config_file);
+	layers = net.layers;
+	ltypes = net.ltypes;
+	//1.细分验证集和测试集
+	shared_ptr<Blob>images_train(new Blob(images->subBlob(0, 59000)));
+	shared_ptr<Blob>labels_train(new Blob(images->subBlob(0, 59000)));
+
+	shared_ptr<Blob>images_val(new Blob(images->subBlob(59000,60000)));
+	shared_ptr<Blob>labels_val(new Blob(images->subBlob(59000,60000)));
+
+	vector<shared_ptr<Blob>>train{images_train,labels_train};
+	vector<shared_ptr<Blob>>val{images_val,labels_val};
+
+	Net model;
+	model.Init(net, train, val);
+}
+
+void Mnist::Train()
+{
+	//0.读入并解析网络
+	net.readNetParam(json_path);
+	layers = net.layers;
+	ltypes = net.ltypes;
+
+	//1.细分验证集和测试集
+	shared_ptr<Blob>images_train(new Blob(images->subBlob(0, 59000)));
+	shared_ptr<Blob>labels_train(new Blob(images->subBlob(0, 59000)));
+
+	shared_ptr<Blob>images_val(new Blob(images->subBlob(59000, 60000)));
+	shared_ptr<Blob>labels_val(new Blob(images->subBlob(59000, 60000)));
+
+	vector<shared_ptr<Blob>>train{ images_train,labels_train };
+	vector<shared_ptr<Blob>>val{ images_val,labels_val };
+
+	Net model;
+	model.Init(net, train, val);
 }

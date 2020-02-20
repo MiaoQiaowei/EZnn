@@ -4,11 +4,13 @@
 #include <iostream>
 #include <vector>
 #include <unordered_map>
+#include <memory>
+#include "Blob.hpp"
 
 using std::unordered_map;
 using std::vector;
 using std::string;
-
+using std::shared_ptr;
 
 struct NetParam      //c++ÖĞ£¬struct¸úclassÓÃ·¨»ù±¾Ò»ÖÂ£¡Ö÷ÒªÇø±ğÊÇ¼Ì³ĞºóµÄÊı¾İ·ÃÎÊÈ¨ÏŞ¡£
 {
@@ -38,17 +40,34 @@ struct NetParam      //c++ÖĞ£¬struct¸úclassÓÃ·¨»ù±¾Ò»ÖÂ£¡Ö÷ÒªÇø±ğÊÇ¼Ì³ĞºóµÄÊı¾İ·
 	bool fine_tune;
 	/*Ô¤ÑµÁ·Ä£ĞÍÎÄ¼ş.gordonmodelËùÔÚÂ·¾¶*/
 	string preTrainModel;
-
 	/*²ãÃû*/
 	vector <string> layers;
 	/*²ãÀàĞÍ*/
 	vector <string> ltypes;
-
 	/*ÎŞĞò¹ØÁªÈİÆ÷*/
 	unordered_map<string, Param> lparams;
-
-
 	void readNetParam(string file);
+};
+
+class Net
+{
+public:
+	Net();
+
+	void Init(NetParam &net, vector<shared_ptr<Blob>> &train, vector<shared_ptr<Blob>> &val);
+
+
+private:
+	shared_ptr<Blob>images_train;
+	shared_ptr<Blob>images_val;
+	shared_ptr<Blob>labels_train;
+	shared_ptr<Blob>labels_val;
+
+	vector<string>layer_names;
+	vector<string>layer_types;
+	unordered_map<string, vector<shared_ptr<Blob>>>data;
+	unordered_map<string, vector<shared_ptr<Blob>>>diff;
+	unordered_map<string, shared_ptr<Layer>>p_layers;
 
 
 };

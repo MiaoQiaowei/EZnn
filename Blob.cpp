@@ -4,14 +4,14 @@ using namespace std;
 using namespace arma;
 
 
-Blob::Blob(const int n, const int c, const int h, const int w, int type) : n(n), c(c), h(h), w(w)
+Blob::Blob(const int n, const int c, const int h, const int w, int type) : n(n), c(c), h(w), w(h)
 {
 	arma_rng::set_seed_random();  //系统随机生成种子(如果没有这一句，就会每次启动程序(进程)时都默认从种子1开始来生成随机数！
 	Init(n, c, h, w, type);
 
 }
 
-void Blob::Init(const int n, const int c, const int h, const int w, int type)
+void Blob::Init(const int n, const int c, const int w, const int h, int type)
 {
 
 	if (type == TONES)
@@ -64,4 +64,31 @@ vector<cube> &Blob::GetData()
 cube & Blob::operator[](int index)
 {
 	return Blob::blob_data[index];
+}
+
+Blob Blob::subBlob(int low_index, int high_index)
+{
+	
+	if (low_index <= high_index)
+	{
+		Blob temp(high_index - low_index, c, h, w);
+		for (int i = low_index; i < high_index; i++)
+		{
+			temp[i-low_index] = (*this)[i];
+		}
+		return temp;
+	}
+	else
+	{
+		Blob temp(n + high_index - low_index, c, h, w);
+		for (int i = low_index; i < n; i++)
+		{
+			temp[i - low_index] = (*this)[i];
+		}
+		for (int i = 0; i < high_index; i++)
+		{
+			temp[i+n-low_index] = (*this)[i];
+		}
+		return temp;
+	}
 }

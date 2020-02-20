@@ -1,10 +1,10 @@
 #include "Net.hpp"
 #include "include/json/json.h"
+#include "Blob.hpp"
 #include <fstream>  
-#include <cassert>  
+#include <cassert> 
+#include <memory>
 using namespace std;
-
-
 
 void NetParam::readNetParam(string file)
 {
@@ -71,9 +71,55 @@ void NetParam::readNetParam(string file)
 				}
 			}
 		}
+	}
+}
 
+Net::Net(){}
 
+void Net::Init(NetParam &net, vector<shared_ptr<Blob>> &train, vector<shared_ptr<Blob>> &val)
+{
+	layer_names = net.layers;
+	layer_types = net.ltypes;
+	for (int i = 0; i < layer_names.size(); i++)
+	{
+		cout << "layer = " << layer_names[i] << " type = " << layer_types[i] << endl;
 	}
 
+	images_train = train[0];
+	labels_train = train[1];
+	images_val = val[0];
+	labels_val = val[1];
 
+	for (int i = 0; i < layer_names.size()-1; i++)
+	{
+		string name= layer_names[i];
+		string type=layer_types[i];
+		shared_ptr<Layer> p_Layer;
+		/*
+		vector<int>input_shape = {
+			net.batch_size,
+			train->GetC(),
+			train->GetH(),
+			train->GetW(),
+		}*/
+		
+		if (type == "Conv")
+		{
+			p_Layer.reset(new Conv);
+		}
+		else if (type == "Fc")
+		{
+			p_Layer.reset(new Fc);
+		}
+		else if (type == "Pool")
+		{
+			p_Layer.reset(new Pool);
+		}
+		else if (type == "Relu")
+		{
+			p_Layer.reset(new Relu);
+		}
+		p_layers[name] = p_Layer; 
+		p_Layer->Init();
+	}
 }

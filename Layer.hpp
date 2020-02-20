@@ -20,6 +20,52 @@ struct Param  //结构体 （层参数，主要是每一层的细节部分）
 	int fc_kernels;
 };
 
+class Layer
+{
+public:
+	//Layer();
+	//virtual ~Layer();
+	virtual void Init() = 0;
+
+private:
+
+};
+
+
+class Conv:public Layer
+{
+public:
+	void Init();
+
+private:
+
+};
+
+class Pool :public Layer
+{
+public:
+	void Init();
+
+private:
+
+};
+class Relu :public Layer
+{
+public:
+	void Init();
+
+private:
+
+};
+
+class Fc :public Layer
+{
+public:
+	void Init();
+
+private:
+
+};
 
 
 

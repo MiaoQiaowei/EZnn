@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <memory>
+#include "Net.hpp"
 
 
 using std::string;
@@ -18,6 +19,8 @@ public:
 	void JsonTest();
 	Blob* GetImages();
 	Blob* GetLabels();
+	void Train(string config_file, shared_ptr<Blob> images, shared_ptr<Blob> labels);
+	void Train();
 
 private:
 	string images_path;
