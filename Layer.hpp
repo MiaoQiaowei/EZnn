@@ -1,7 +1,6 @@
 #ifndef  __LAYER_HPP__
 #define __LAYER_HPP__
 #include <iostream>
-#include <vector>
 #include <memory>
 #include "Blob.hpp"
 
@@ -33,7 +32,9 @@ class Layer
 public:
 	Layer() {};
 	~Layer() {};
-	virtual	void Init(const vector<int>&input_shape, const vector<shared_ptr<Blob>>&data, LayerParam param, const string name) {};
+	virtual	void Init(const vector<int>&input_shape, vector<shared_ptr<Blob>>&data, const LayerParam param, const string name) {};
+	virtual	void CalculateShape(const vector<int>&input_shape, vector<int>&out_shape, LayerParam param)=0;
+	virtual void forward(const vector<shared_ptr<Blob>>&in, shared_ptr<Blob>&out, const LayerParam &param)=0;
 
 private:
 
@@ -44,7 +45,9 @@ class Conv:public Layer
 public:
 	Conv() {};
 	~Conv() {};
-	void Init(const vector<int>&input_shape, const vector<shared_ptr<Blob>>&data, LayerParam param, const string name);
+	void Init(const vector<int>&input_shape, vector<shared_ptr<Blob>>&data, const LayerParam param, const string name);
+	void CalculateShape(const vector<int>&input_shape, vector<int>&out_shape, LayerParam param);
+	void forward(const vector<shared_ptr<Blob>>&in, shared_ptr<Blob>&out, const LayerParam &param);
 private:
 
 };
@@ -54,7 +57,9 @@ class Relu :public Layer
 public:
 	Relu() {};
 	~Relu() {};
-	void Init(const vector<int>&input_shape, const vector<shared_ptr<Blob>>&data, LayerParam param, const string name);
+	void Init(const vector<int>&input_shape, vector<shared_ptr<Blob>>&data, const LayerParam param, const string name);
+	void CalculateShape(const vector<int>&input_shape, vector<int>&out_shape, LayerParam param);
+	void forward(const vector<shared_ptr<Blob>>&in, shared_ptr<Blob>&out, const LayerParam &param);
 private:
 
 };
@@ -65,7 +70,9 @@ class Fc :public Layer
 public:
 	Fc() {};
 	~Fc() {};
-	void Init(const vector<int>&input_shape, const vector<shared_ptr<Blob>>&data, LayerParam param, const string name);
+	void Init(const vector<int>&input_shape, vector<shared_ptr<Blob>>&data, const LayerParam param, const string name);
+	void CalculateShape(const vector<int>&input_shape, vector<int>&out_shape, LayerParam param);
+	void forward(const vector<shared_ptr<Blob>>&in, shared_ptr<Blob>&out, const LayerParam &param);
 private:
 
 };
@@ -75,7 +82,9 @@ class Pool :public Layer
 public:
 	Pool() {};
 	~Pool() {};
-	void Init(const vector<int>&input_shape, const vector<shared_ptr<Blob>>&data, LayerParam param, const string name);
+	void Init(const vector<int>&input_shape, vector<shared_ptr<Blob>>&data, const LayerParam param, const string name);
+	void CalculateShape(const vector<int>&input_shape, vector<int>&out_shape, LayerParam param);
+	void forward(const vector<shared_ptr<Blob>>&in, shared_ptr<Blob>&out, const LayerParam &param);
 private:
 
 };

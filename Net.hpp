@@ -52,10 +52,10 @@ struct NetParam      //c++ÖĞ£¬struct¸úclassÓÃ·¨»ù±¾Ò»ÖÂ£¡Ö÷ÒªÇø±ğÊÇ¼Ì³ĞºóµÄÊı¾İ·
 class Net
 {
 public:
-	Net();
-
+	Net(){};
 	void Init(NetParam &net, vector<shared_ptr<Blob>> &train, vector<shared_ptr<Blob>> &val);
-
+	void Train(NetParam &net_param);
+	void TrainWithBatch(shared_ptr<Blob> & images, shared_ptr<Blob> & labels, NetParam &param);
 
 private:
 	shared_ptr<Blob>images_train;
@@ -65,11 +65,11 @@ private:
 
 	vector<string>layer_names;
 	vector<string>layer_types;
+
 	unordered_map<string, vector<shared_ptr<Blob>>>data;
 	unordered_map<string, vector<shared_ptr<Blob>>>diff;
 	unordered_map<string, shared_ptr<Layer>>p_layers;
-
-
+	unordered_map<string, vector<int>>layers_output_shapes;
 };
 
 #endif

@@ -53,15 +53,6 @@
       "stride": 1 //滑动步长
     },
 		{
-			"name":"conv2",  //层名
-			"type":"Conv",   //层类型
-			"kernel num":10,  //卷积核个数
-			"kernel height":6,  //卷积核高
-			"kernel width":6,   //卷积核宽
-			"pad":1,			//填充数
-			"stride":1			//滑动步长
-		},
-		{
 			"name":"fc1",  //层名
 			"type":"Fc",   //层类型
 			"kernel num":10 //神经元个数

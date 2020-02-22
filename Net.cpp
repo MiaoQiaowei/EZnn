@@ -74,7 +74,6 @@ void NetParam::readNetParam(string file)
 	}
 }
 
-Net::Net(){}
 
 void Net::Init(NetParam &net_param, vector<shared_ptr<Blob>> &train, vector<shared_ptr<Blob>> &val)
 {
@@ -94,6 +93,7 @@ void Net::Init(NetParam &net_param, vector<shared_ptr<Blob>> &train, vector<shar
 	{
 		data[layer_names[i]] = vector<shared_ptr<Blob>>(3, NULL);    //为每一层创建前向计算要用到的3个Blob
 		diff[layer_names[i]] = vector<shared_ptr<Blob>>(3, NULL);      //为每一层创建反向计算要用到的3个Blob
+		layers_output_shapes[layer_names[i]] = vector <int> (4);
 	}
 
 	shared_ptr<Layer> p_Layer;
@@ -129,5 +129,63 @@ void Net::Init(NetParam &net_param, vector<shared_ptr<Blob>> &train, vector<shar
 		}
 		p_layers[name] = p_Layer; 
 		p_Layer->Init(input_shape,data[name], net_param.layer_params[name],name);
+		p_Layer->CalculateShape(input_shape, layers_output_shapes[name], net_param.layer_params[name]);
+		input_shape.assign(layers_output_shapes[name].begin(), layers_output_shapes[name].end());
+		cout << "Shape:";
+		cout << "(" << layers_output_shapes[name][0];
+		cout << "," << layers_output_shapes[name][1];
+		cout << "," << layers_output_shapes[name][2];
+		cout << "," << layers_output_shapes[name][3] <<")"<< endl;
+	}	
+}
+
+void Net::Train(NetParam & net_param)
+{
+	/*从数据集中找到batch*/
+	//总样本数目：
+	int total_num = images_train->GetN();//一共有多少样本
+	int batch_num = net_param.batch_size;//batch_size
+	int per_epoch = total_num / batch_num;//单个批次中有多少组batch
+	int total_batch_num = per_epoch * batch_num;//一共要训练多少组batch的数据
+	cout << "total_batch_num: " << total_batch_num << endl;
+	for (int i = 0; i < 2; i++)
+	{
+		shared_ptr<Blob>images_batch;
+		shared_ptr<Blob>labels_batch;
+
+		images_batch.reset(new Blob(images_train->SubBlob(i*batch_num % total_num, (i + 1)*batch_num % total_num)));
+		labels_batch.reset(new Blob(labels_train->SubBlob(i*batch_num % total_num, (i + 1)*batch_num % total_num)));
+	
+		/*训练*/
+		TrainWithBatch(images_batch, labels_batch, net_param);
+
+		/*参数更新*/
+		/*评估当前准确率*/
 	}
+	
+	
+}
+
+void Net::TrainWithBatch(shared_ptr<Blob> & images, shared_ptr<Blob> & labels, NetParam &param)
+{
+	/*填入X*/
+	data[layer_names[0]][0] = images;
+	
+	/*逐层前项计算*/
+	int n = (int)layer_names.size();
+	
+	for (int i = 0; i < n-1; i++)
+	{
+		string name = layer_names[i];
+		shared_ptr<Blob>out;
+		cout << "name : " << name <<endl;
+		p_layers[name]->forward(data[name],out,param.layer_params[name]);
+		data[layer_names[i+1]][0] = out;
+	}
+
+	
+	/*计算损失*/
+	
+
+	/*反向传播*/
 }

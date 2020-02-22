@@ -13,7 +13,7 @@ using std::string;
 class Mnist
 {
 public:
-	Mnist(string images_path,string labels_path, string json_path);
+	Mnist(string images_path, string labels_path, string json_path);
 	~Mnist();
 	void MnistTest();
 	void JsonTest();

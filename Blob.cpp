@@ -4,10 +4,10 @@ using namespace std;
 using namespace arma;
 
 
-Blob::Blob(const int n, const int c, const int h, const int w, int type) : n(n), c(c), h(w), w(h)
+Blob::Blob(const int n, const int c, const int w, const int h, int type) : n(n), c(c), w(w), h(h)
 {
 	arma_rng::set_seed_random();  //系统随机生成种子(如果没有这一句，就会每次启动程序(进程)时都默认从种子1开始来生成随机数！
-	Init(n, c, h, w, type);
+	Init(n, c, w, h, type);
 
 }
 
@@ -65,6 +65,15 @@ cube & Blob::operator[](int index)
 	return Blob::blob_data[index];
 }
 
+Blob & Blob::operator=(const double in)
+{
+	for (int i = 0; i < n; i++)
+	{
+		blob_data[i].fill(in);
+	}
+	return *this;
+}
+
 Blob Blob::SubBlob(int low_index, int high_index)
 {
 	
@@ -92,6 +101,38 @@ Blob Blob::SubBlob(int low_index, int high_index)
 	}
 }
 
+Blob & Blob::operator*=(const double in)
+{
+	for (int i = 0; i < n; i++)
+	{
+		blob_data[i] = blob_data[i] * in;
+	}
+	return *this;
+}
+
+Blob Blob::Pad(int pad, double val)
+{
+	assert(!blob_data.empty());
+	Blob x_paded(n, c, w + pad * 2, h + pad * 2);
+	x_paded = val; 
+	for (int n_ = 0; n_< n; n_++)
+	{
+		for (int c_ = 0; c_ < c; c_++)
+		{
+			for (int h_ = 0; h_ < h; h_++)
+			{
+				for (int w_ = 0; w_ < w; w_++)
+				{
+					x_paded[n_]( h_ + pad,  w_ + pad, c_) = blob_data[n_]( h_, w_, c_);
+				}
+			}
+		}
+
+	}
+	return x_paded;
+}
+
+
 int Blob::GetC() 
 {
 	return c;
@@ -105,4 +146,9 @@ int Blob::GetH()
 int Blob::GetW() 
 {
 	return w;
+}
+
+int Blob::GetN()
+{
+	return n;
 }

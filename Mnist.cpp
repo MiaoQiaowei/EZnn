@@ -179,4 +179,5 @@ void Mnist::Train()
 
 	Net model;
 	model.Init(net_param, train, val);
+	model.Train(net_param);
 }
