@@ -1,1 +1,7 @@
-﻿  EZnn.vcxproj -> D:\github\EZnn\x64\Debug\EZnn.exe
+﻿  Mnist.cpp
+  Layer.cpp
+D:\github\EZnn\EZnn\include\opencv2/core/mat.hpp(1965): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+D:\github\EZnn\EZnn\include\opencv2/core/persistence.hpp : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+D:\github\EZnn\EZnn\include\opencv2/core/utility.hpp : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+  正在生成代码...
+  EZnn.vcxproj -> D:\github\EZnn\x64\Debug\EZnn.exe

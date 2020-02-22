@@ -89,4 +89,10 @@ private:
 
 };
 
+class Softmax
+{
+public:
+	static void softmax_cross_entropy_with_logits(const vector<shared_ptr<Blob>>& in, double& loss, shared_ptr<Blob>& diff_out);
+};
+
 #endif  //__LAYER_HPP__

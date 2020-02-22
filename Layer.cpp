@@ -5,8 +5,6 @@
 using namespace std;
 using namespace arma;
 
-
-
 void Conv::Init(const vector<int>&input_shape, vector<shared_ptr<Blob>>&data, const LayerParam param, const string name)
 {
 	//获取尺寸
@@ -101,12 +99,10 @@ void Conv::forward(const vector<shared_ptr<Blob>>&in, shared_ptr<Blob>&out, cons
 			}
 		}
 	}
-
-	
-	(*in[1])[0].slice(0).print("W=");
-	cout << "b:" << endl;
-	cout << as_scalar((*in[2])[0]) << endl;
-	(*out)[0].slice(0).print("Out=");
+	//(*in[1])[0].slice(0).print("W=");
+	//cout << "b:" << endl;
+	//cout << as_scalar((*in[2])[0]) << endl;
+	//(*out)[0].slice(0).print("Out=");
 	
 	//开始卷积运算
 }
@@ -153,6 +149,39 @@ void Fc::CalculateShape(const vector<int>&input_shape, vector<int>&out_shape, La
 void Fc::forward(const vector<shared_ptr<Blob>>&in, shared_ptr<Blob>&out, const LayerParam &param)
 {
 	cout << "Fc forward" << endl;
+	if (out)
+		out.reset();
+
+	//获取相关尺寸
+	assert(in[0]->GetC() == in[1]->GetC());
+	int n_x = in[0]->GetN();
+	int c_x = in[0]->GetC();
+	int w_x = in[0]->GetW();
+	int h_x = in[0]->GetH();
+
+	int n_w = in[1]->GetN();
+	int w_w = in[1]->GetW();
+	int h_w = in[1]->GetH();
+	assert(h_x == h_w && w_x == w_w);
+
+	int w_out = 1;
+	int h_out = 1;
+
+	//卷积操作
+	out.reset(new Blob(n_x, n_w, w_out, h_out));
+	for (int n_ = 0; n_ < n_x; n_++)
+	{
+		for (int c_ = 0; c_ < n_w; c_++)
+		{
+			(*out)[n_](0,0, c_) = arma::accu((*in[0])[n_] % (*in[1])[c_]) + as_scalar((*in[2])[c_]);
+		}
+	}
+	//(*in[1])[0].slice(0).print("W=");
+	//cout << "b:" << endl;
+	//cout << as_scalar((*in[2])[0]) << endl;
+	//(*out)[0].slice(0).print("Out=");
+
+	//开始卷积运算
 }
 
 void Pool::Init(const vector<int>&input_shape, vector<shared_ptr<Blob>>&data, const LayerParam param, const string name)
@@ -190,6 +219,41 @@ void Pool::CalculateShape(const vector<int>&input_shape, vector<int>&out_shape, 
 void Pool::forward(const vector<shared_ptr<Blob>>&in, shared_ptr<Blob>&out, const LayerParam &param)
 {
 	cout << "Pool forward" << endl;
+	if (out)
+		out.reset();
+
+	//获取相关尺寸
+	int n_x = in[0]->GetN();
+	int c_x = in[0]->GetC();
+	int w_x = in[0]->GetW();
+	int h_x = in[0]->GetH();
+	
+	int h_w = param.pool_height;
+	int w_w = param.pool_width;
+
+	int w_out = (w_x - w_w) / param.pool_stride + 1;
+	int h_out = (h_x - h_w) / param.pool_stride + 1;
+
+	//卷积操作
+	out.reset(new Blob(n_x, c_x, w_out, h_out));
+	for (int n_ = 0; n_ < n_x; n_++)
+	{
+		for (int c_ = 0; c_ < c_x; c_++)
+		{
+			for (int h_ = 0; h_ < h_out; h_++)
+			{
+				for (int w_ = 0; w_ < w_out; w_++)
+				{
+					(*out)[n_](h_, w_, c_) = (*in[0])[n_]
+					(
+						span(h_*param.pool_stride, h_*param.pool_stride + h_w - 1),
+						span(w_*param.pool_stride, w_*param.pool_stride + w_w - 1),
+						span(c_,c_)
+					).max();
+				}
+			}
+		}
+	}
 }
 
 void Relu::Init(const vector<int>&input_shape, vector<shared_ptr<Blob>>&data, const LayerParam param, const string name)
@@ -206,5 +270,35 @@ void Relu::CalculateShape(const vector<int>&input_shape, vector<int>&out_shape, 
 
 void Relu::forward(const vector<shared_ptr<Blob>>&in, shared_ptr<Blob>&out, const LayerParam &param)
 {
+	if (out)
+		out.reset();
+	out.reset( new Blob(*in[0]));
+	out->Max(0);
 	cout << "Relu forward" << endl;
 }
+
+void Softmax::softmax_cross_entropy_with_logits(const vector<shared_ptr<Blob>>& in, double& loss, shared_ptr<Blob>& diff_out)
+{
+	cout << "Softmax..." << endl;
+	if (diff_out)
+		diff_out.reset();
+
+	//获取相关尺寸
+	
+	int n_x = in[0]->GetN();
+	int c_x = in[0]->GetC();
+	int w_x = in[0]->GetW();
+	int h_x = in[0]->GetH();
+
+	assert(w_x == 1 && h_x == 1);
+	loss =0.0;
+	diff_out.reset(new Blob(n_x, c_x, w_x, h_x));
+	for (int i = 0; i < n_x; i++)
+	{
+		cube prob = arma::exp((*in[0])[i])/arma::accu(arma::exp((*in[0])[i]));
+		loss += (-arma::accu((*in[1])[i] % arma::log(prob)));
+		(*diff_out)[i] = prob - (*in[1])[i];
+	}
+	loss /= n_x;
+
+ }

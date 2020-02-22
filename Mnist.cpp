@@ -12,30 +12,22 @@ Mnist::Mnist(string images_path, string labels_path, string json_path)
 	this->labels_path = labels_path;
 	this->json_path = json_path;
 	//ÊµÀı»¯Á½¸öBlob¶ÔÏó
-	Blob* images(new Blob(60000, 1, 28, 28, TONES));
-	Blob* labels(new Blob(60000, 10, 1, 1, TONES));
+	images.reset(new Blob(60000, 1, 28, 28, TZEROS));
+	labels.reset(new Blob(60000, 10, 1, 1, TZEROS));
 	//Êı¾İÂ·¾¶
-	ReadMnistData(this->images_path, images);
-	ReadMnistLabel(this->labels_path, labels);
-
-	this->images = images;
-	this->labels = labels;
+	ReadMnistData(images_path, images);
+	ReadMnistLabel(labels_path, labels);
 }
 
-Mnist::~Mnist()
+
+shared_ptr<Blob> Mnist::GetImages()
 {
-	delete(this->images);
-	delete(this->labels);
+	return images;
 }
 
-Blob* Mnist::GetImages()
+shared_ptr<Blob> Mnist::GetLabels()
 {
-	return this->images;
-}
-
-Blob* Mnist::GetLabels()
-{
-	return this->labels;
+	return labels;
 }
 
 int Mnist::ReverseInt(int i)  ////°Ñ´ó¶ËÊı¾İ×ª»»ÎªÎÒÃÇ³£ÓÃµÄĞ¡¶ËÊı¾İ £¨´óĞ¡¶ËÄ£Ê½µÄÔ­Òò£©
@@ -48,7 +40,7 @@ int Mnist::ReverseInt(int i)  ////°Ñ´ó¶ËÊı¾İ×ª»»ÎªÎÒÃÇ³£ÓÃµÄĞ¡¶ËÊı¾İ £¨´óĞ¡¶ËÄ£Ê
 	return ((int)ch1 << 24) + ((int)ch2 << 16) + ((int)ch3 << 8) + ch4;
 }
 
-void Mnist::ReadMnistData(string path, Blob* &images)
+void Mnist::ReadMnistData(string path, shared_ptr<Blob> &images)
 {
 	ifstream file(path, ios::binary);
 	if (file.is_open())
@@ -95,7 +87,7 @@ void Mnist::ReadMnistData(string path, Blob* &images)
 	}
 
 }
-void Mnist::ReadMnistLabel(string path, Blob* &labels)
+void Mnist::ReadMnistLabel(string path, shared_ptr<Blob> &labels)
 {
 
 	ifstream file(path, ios::binary);
@@ -105,10 +97,10 @@ void Mnist::ReadMnistLabel(string path, Blob* &labels)
 		int magic_number = 0;
 		int number_of_images = 0;
 		file.read((char*)&magic_number, sizeof(magic_number));
-		magic_number = Mnist::ReverseInt(magic_number);
+		magic_number = ReverseInt(magic_number);
 		cout << "magic_number=" << magic_number << endl;
 		file.read((char*)&number_of_images, sizeof(number_of_images));
-		number_of_images = Mnist::ReverseInt(number_of_images);
+		number_of_images = ReverseInt(number_of_images);
 		cout << "number_of_Labels=" << number_of_images << endl;
 		//2.½«ËùÓĞ±êÇ©×ªÎªBlob´æ´¢£¡£¨ÊÖĞ´Êı×ÖÊ¶±ğ£º0~9£©
 		for (int i = 0; i < number_of_images; ++i)
@@ -169,15 +161,15 @@ void Mnist::Train()
 
 	//1.Ï¸·ÖÑéÖ¤¼¯ºÍ²âÊÔ¼¯
 	shared_ptr<Blob>images_train(new Blob(images->SubBlob(0, 59000)));
-	shared_ptr<Blob>labels_train(new Blob(images->SubBlob(0, 59000)));
+	shared_ptr<Blob>labels_train(new Blob(labels->SubBlob(0, 59000)));
 
 	shared_ptr<Blob>images_val(new Blob(images->SubBlob(59000, 60000)));
-	shared_ptr<Blob>labels_val(new Blob(images->SubBlob(59000, 60000)));
+	shared_ptr<Blob>labels_val(new Blob(labels->SubBlob(59000, 60000)));
 
-	vector<shared_ptr<Blob>>train{ images_train,labels_train };
-	vector<shared_ptr<Blob>>val{ images_val,labels_val };
+	vector<shared_ptr<Blob>>images_data{ images_train,images_val };
+	vector<shared_ptr<Blob>>labels_data{ labels_train,labels_val };
 
 	Net model;
-	model.Init(net_param, train, val);
+	model.Init(net_param, images_data, labels_data);
 	model.Train(net_param);
 }

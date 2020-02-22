@@ -13,5 +13,6 @@ int main(int argc, char** argv)
 	string imagesPath = "D:\\github\\EZnn\\Mnist\\train\\train-images.idx3-ubyte";
 	string labelsPath = "D:\\github\\EZnn\\Mnist\\train\\train-labels.idx1-ubyte";
 	Mnist mnist(imagesPath, labelsPath, ModelPath);
+	cout << "--------------------------begin to train---------------------------" << endl;
 	mnist.Train();
 }

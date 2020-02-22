@@ -53,6 +53,7 @@ class Net
 {
 public:
 	Net(){};
+	double loss;
 	void Init(NetParam &net, vector<shared_ptr<Blob>> &train, vector<shared_ptr<Blob>> &val);
 	void Train(NetParam &net_param);
 	void TrainWithBatch(shared_ptr<Blob> & images, shared_ptr<Blob> & labels, NetParam &param);

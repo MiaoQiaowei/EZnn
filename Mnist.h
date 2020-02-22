@@ -9,16 +9,16 @@
 
 
 using std::string;
+using std::shared_ptr;
 
 class Mnist
 {
 public:
 	Mnist(string images_path, string labels_path, string json_path);
-	~Mnist();
 	void MnistTest();
 	void JsonTest();
-	Blob* GetImages();
-	Blob* GetLabels();
+	shared_ptr<Blob> GetImages();
+	shared_ptr<Blob> GetLabels();
 	void Train(string config_file, shared_ptr<Blob> images, shared_ptr<Blob> labels);
 	void Train();
 
@@ -29,11 +29,11 @@ private:
 	NetParam net_param;
 	vector<string> layers;
 	vector<string> layer_types;
-	Blob* images;
-	Blob* labels;
+	shared_ptr<Blob> images;
+	shared_ptr<Blob> labels;
 	int  ReverseInt(int i);
-	void ReadMnistData(string path, Blob* &images);
-	void ReadMnistLabel(string path, Blob* &labels);
+	void ReadMnistData(string path, shared_ptr<Blob> &images);
+	void ReadMnistLabel(string path, shared_ptr<Blob> &labels);
 };
 
 #endif // __Minist_HPP__

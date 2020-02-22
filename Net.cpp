@@ -75,7 +75,7 @@ void NetParam::readNetParam(string file)
 }
 
 
-void Net::Init(NetParam &net_param, vector<shared_ptr<Blob>> &train, vector<shared_ptr<Blob>> &val)
+void Net::Init(NetParam &net_param, vector<shared_ptr<Blob>> &images_data, vector<shared_ptr<Blob>> &labels_data)
 {
 	layer_names = net_param.layers;
 	layer_types = net_param.layer_types;
@@ -84,10 +84,10 @@ void Net::Init(NetParam &net_param, vector<shared_ptr<Blob>> &train, vector<shar
 		cout << "layer = " << layer_names[i] << " type = " << layer_types[i] << endl;
 	}
 
-	images_train = train[0];
-	labels_train = train[1];
-	images_val = val[0];
-	labels_val = val[1];
+	images_train = images_data[0];
+	labels_train = labels_data[0];
+	images_val = images_data[1];
+	labels_val = labels_data[1];
 
 	for (int i = 0; i < (int)layer_names.size(); ++i)   //遍历每一层
 	{
@@ -100,8 +100,8 @@ void Net::Init(NetParam &net_param, vector<shared_ptr<Blob>> &train, vector<shar
 	vector<int>input_shape = {
 			net_param.batch_size,
 			images_train->GetC(),
-			images_train->GetH(),
 			images_train->GetW(),
+			images_train->GetH()
 	};
 	//打印shape
 	cout << "input size:"  << " ( " << input_shape[0] << " , " << input_shape[1] << " , " << input_shape[2] << " , " << input_shape[3] << " )" << endl;
@@ -162,14 +162,13 @@ void Net::Train(NetParam & net_param)
 		/*参数更新*/
 		/*评估当前准确率*/
 	}
-	
-	
 }
 
 void Net::TrainWithBatch(shared_ptr<Blob> & images, shared_ptr<Blob> & labels, NetParam &param)
 {
 	/*填入X*/
 	data[layer_names[0]][0] = images;
+	data[layer_names.back()][1] = labels;
 	
 	/*逐层前项计算*/
 	int n = (int)layer_names.size();
@@ -185,7 +184,8 @@ void Net::TrainWithBatch(shared_ptr<Blob> & images, shared_ptr<Blob> & labels, N
 
 	
 	/*计算损失*/
-	
+	Softmax::softmax_cross_entropy_with_logits(data[layer_names.back()], loss, diff[layer_names.back()][0]);
+	cout << "loss: " << loss << endl;
 
 	/*反向传播*/
 }
