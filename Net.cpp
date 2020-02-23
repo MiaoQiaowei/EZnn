@@ -148,7 +148,7 @@ void Net::Train(NetParam & net_param)
 	int per_epoch = total_num / batch_num;//单个批次中有多少组batch
 	int total_batch_num = per_epoch * batch_num;//一共要训练多少组batch的数据
 	cout << "total_batch_num: " << total_batch_num << endl;
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < 1; i++)
 	{
 		shared_ptr<Blob>images_batch;
 		shared_ptr<Blob>labels_batch;
@@ -181,11 +181,17 @@ void Net::TrainWithBatch(shared_ptr<Blob> & images, shared_ptr<Blob> & labels, N
 		p_layers[name]->forward(data[name],out,param.layer_params[name]);
 		data[layer_names[i+1]][0] = out;
 	}
-
+	
 	
 	/*计算损失*/
 	Softmax::softmax_cross_entropy_with_logits(data[layer_names.back()], loss, diff[layer_names.back()][0]);
 	cout << "loss: " << loss << endl;
 
 	/*反向传播*/
+
+	for (int i = n - 2; i >= 0; --i)
+	{
+		string name = layer_names[i];
+		p_layers[name]->backward(diff[layer_names[i + 1]][0], data[name], diff[name], param.layer_params[name]);
+	}
 }

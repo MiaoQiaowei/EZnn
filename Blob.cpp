@@ -8,7 +8,12 @@ Blob::Blob(const int n, const int c, const int w, const int h, int type) : n(n),
 {
 	arma_rng::set_seed_random();  //系统随机生成种子(如果没有这一句，就会每次启动程序(进程)时都默认从种子1开始来生成随机数！
 	Init(n, c, w, h, type);
+}
 
+Blob::Blob(const vector<int> shape, int type) : n(shape[0]), c(shape[1]), w(shape[2]), h(shape[3])
+{
+	arma_rng::set_seed_random();  //系统随机生成种子(如果没有这一句，就会每次启动程序(进程)时都默认从种子1开始来生成随机数！
+	Init(n, c, w, h, type);
 }
 
 void Blob::Init(const int n, const int c, const int w, const int h, int type)
@@ -140,6 +145,57 @@ void Blob::Max(double in)
 		blob_data[i].transform([in](double e) {return e > in ? e : in; });
 	}
 }
+
+Blob Blob::DeletePad(int pad)
+{
+	assert(!blob_data.empty());   //断言：Blob自身不为空
+	//int N_ = n;
+	//int C_ = c;
+	//int  W_ = w;
+	//int H_ = h;
+	Blob out(n, c, w - 2 * pad, h - 2 * pad);
+	for (int n_ = 0; n_ < n; ++n_)
+	{
+		for (int c_ = 0; c_ < c; ++c_)
+		{
+			for (int h_ = pad; h_ < h - pad; ++h_)
+			{
+				for (int w_ = pad; w_ < w - pad; ++w_)
+				{
+					//注意，out的索引是从0开始的，所以要减去pad
+					out[n_](h_ - pad, w_ - pad, c_) = blob_data[n_](h_, w_, c_);
+				}
+			}
+		}
+	}
+	return out;
+}
+
+vector<int> Blob::size() const
+{
+	vector<int> shape{ n,c,w,h };
+	return shape;
+}
+
+Blob operator*(Blob& A, Blob& B)  //友元函数的具体实现：这里没有类限定例如 (Blob& Blob::)这种形式
+{
+	//(1). 确保两个输入Blob尺寸一样
+	vector<int> size_A = A.size();
+	vector<int> size_B = B.size();
+	for (int i = 0; i < 4; ++i)
+	{
+		assert(size_A[i] == size_B[i]);  //断言：两个输入Blob的尺寸（N,C,H,W）一样！
+	}
+	//(2). 遍历所有的cube，每一个cube做对应位置相乘（cube % cube）
+	int N = size_A[0];
+	Blob C(A.size());
+	for (int i = 0; i < N; ++i)
+	{
+		C[i] = A[i] % B[i];
+	}
+	return C;
+}
+
 
 
 int Blob::GetC() 

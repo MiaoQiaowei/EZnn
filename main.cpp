@@ -15,4 +15,5 @@ int main(int argc, char** argv)
 	Mnist mnist(imagesPath, labelsPath, ModelPath);
 	cout << "--------------------------begin to train---------------------------" << endl;
 	mnist.Train();
+	cout << "----------------------------train end------------------------------" << endl;
 }

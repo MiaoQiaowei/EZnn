@@ -99,13 +99,70 @@ void Conv::forward(const vector<shared_ptr<Blob>>&in, shared_ptr<Blob>&out, cons
 			}
 		}
 	}
-	//(*in[1])[0].slice(0).print("W=");
-	//cout << "b:" << endl;
-	//cout << as_scalar((*in[2])[0]) << endl;
-	//(*out)[0].slice(0).print("Out=");
 	
 	//开始卷积运算
 }
+
+void Conv::backward(const shared_ptr<Blob>& diff_in, const vector<shared_ptr<Blob>>& cache, vector<shared_ptr<Blob>>& gradient, const LayerParam& param)
+{
+	cout << "Conv backward" << endl;
+	
+	//step1. 设置输出梯度Blob的尺寸（dX---grads[0]）
+	gradient[0].reset(new Blob(cache[0]->size(), TZEROS));
+	gradient[1].reset(new Blob(cache[1]->size(), TZEROS));
+	gradient[2].reset(new Blob(cache[2]->size(), TZEROS));
+	//step2. 获取输入梯度Blob的尺寸（diff_in）
+	int n_x = diff_in->GetN();         //输入梯度Blob中cube个数（该batch样本个数）
+	int c_x = diff_in->GetC();         //输入梯度Blob通道数
+	int h_x = diff_in->GetH();         //输入梯度Blob高
+	int w_x = diff_in->GetW();         //输入梯度Blob宽
+	
+	//step3. 获取卷积核相关参数
+	int h_w = param.conv_height;
+	int w_w = param.conv_width;
+	int stride_w = param.conv_stride;
+
+	//step4. 填充操作
+	Blob pad_x = cache[0]->Pad(param.conv_pad);             //参与实际反向传播计算的应该是填充过的特征Blob
+	Blob gradient_x(pad_x.size(), TZEROS);                      //梯度Blob应该与该层的特征Blob尺寸保持一致
+
+	//step5. 开始反向传播
+	for (int n_ = 0; n_ < n_x; ++n_)   //遍历输入梯度din的样本数
+	{
+		for (int c_ = 0; c_ < c_x; ++c_)  //遍历输入梯度din的通道数
+		{
+			for (int h_ = 0; h_ < h_x; ++h_)   //遍历输入梯度din的高
+			{
+				for (int w_ = 0; w_ < w_x; ++w_)   //遍历输入梯度din的宽
+				{
+					//(1). 通过滑动窗口，截取不同输入特征片段
+					cube window = pad_x[n_](span(h_*stride_w, h_*stride_w + h_w - 1), span(w_*stride_w, w_*stride_w + w_w - 1), span::all);
+					//(2). 计算梯度
+					//dX
+					gradient_x[n_](span(h_*stride_w, h_*stride_w + h_w - 1), span(w_*stride_w, w_*stride_w + w_w - 1), span::all) += (*diff_in)[n_](h_, w_, c_) * (*cache[1])[c_];
+					//dW  --->grads[1]
+					(*gradient[1])[c_] += (*diff_in)[n_](h_, w_, c_) * window / n_x;
+					//db   --->grads[2]
+					(*gradient[2])[c_](0, 0, 0) += (*diff_in)[n_](h_, w_, c_) / n_x;
+				}
+			}
+		}
+	}
+	////测试代码
+	//(*diff_in)[0].slice(0).print("input:   diff_in=");				    //输入梯度：打印第一个din的第一个矩阵
+	//(*diff_in)[0].slice(1).print("input:   diff_in=");				    //输入梯度：打印第一个din的第二个矩阵
+	//(*diff_in)[0].slice(2).print("input:   diff_in=");				    //输入梯度：打印第一个din的第三个矩阵
+	//(*cache[1])[0].slice(0).print("W1=");		                //打印第一个卷积核的第一个矩阵	
+	//(*cache[1])[1].slice(0).print("W2=");		                //打印第二个卷积核的第一个矩阵	
+	//(*cache[1])[2].slice(0).print("W3=");		                //打印第三个卷积核的第一个矩阵		
+	//gradient_x[0].slice(0).print("output:   gradient_x=");		//输出梯度：打印第一个pad_dX的第一个矩阵
+
+	//step6. 去掉输出梯度中的padding部分
+	(*gradient[0]) = gradient_x.DeletePad(param.conv_pad);
+}
+
+
+
 
 void Fc::Init(const vector<int>&input_shape, vector<shared_ptr<Blob>>&data, const LayerParam param, const string name)
 {
@@ -176,13 +233,37 @@ void Fc::forward(const vector<shared_ptr<Blob>>&in, shared_ptr<Blob>&out, const 
 			(*out)[n_](0,0, c_) = arma::accu((*in[0])[n_] % (*in[1])[c_]) + as_scalar((*in[2])[c_]);
 		}
 	}
-	//(*in[1])[0].slice(0).print("W=");
-	//cout << "b:" << endl;
-	//cout << as_scalar((*in[2])[0]) << endl;
-	//(*out)[0].slice(0).print("Out=");
 
 	//开始卷积运算
 }
+
+void Fc::backward(const shared_ptr<Blob>& diff_in, const vector<shared_ptr<Blob>>& cache, vector<shared_ptr<Blob>>& gradient, const LayerParam& param)
+{
+	cout << "Fc backward" << endl;
+	gradient[0].reset(new Blob(cache[0]->size(), TZEROS));
+	gradient[1].reset(new Blob(cache[1]->size(), TZEROS));
+	gradient[2].reset(new Blob(cache[2]->size(), TZEROS));
+
+	int n_x = gradient[0]->GetN();
+	int f_x = gradient[1]->GetN();
+	assert(f_x == cache[1]->GetN());
+
+	for (int n_ = 0; n_ < n_x; ++n_)
+	{
+		for (int f_ = 0; f_ < f_x; ++f_)
+		{
+			//dX
+			(*gradient[0])[n_] += (*diff_in)[n_](0, 0, f_) * (*cache[1])[f_];
+			//dW
+			(*gradient[1])[f_] += (*diff_in)[n_](0, 0, f_) * (*cache[0])[n_] / n_x;
+			//db
+			(*gradient[2])[f_] += (*diff_in)[n_](0, 0, f_) / n_x;
+		}
+	}
+}
+
+
+
 
 void Pool::Init(const vector<int>&input_shape, vector<shared_ptr<Blob>>&data, const LayerParam param, const string name)
 {
@@ -256,6 +337,52 @@ void Pool::forward(const vector<shared_ptr<Blob>>&in, shared_ptr<Blob>&out, cons
 	}
 }
 
+void Pool::backward(const shared_ptr<Blob>& diff_in, const vector<shared_ptr<Blob>>& cache, vector<shared_ptr<Blob>>& gradient, const LayerParam& param)
+{
+	cout << "Pool  backward " << endl;
+	//step1. 设置输出梯度Blob的尺寸（dX---grads[0]）
+	gradient[0].reset(new Blob(cache[0]->size(), TZEROS));
+	//step2. 获取输入梯度Blob的尺寸（din）
+	int n_x = diff_in->GetN();        //输入梯度Blob中cube个数（该batch样本个数）
+	int c_x = diff_in->GetC();         //输入梯度Blob通道数
+	int h_x = diff_in->GetH();      //输入梯度Blob高
+	int w_x = diff_in->GetW();    //输入梯度Blob宽
+
+	//step3. 获取池化核相关参数
+	int h_p = param.pool_height;
+	int w_p = param.pool_width;
+	int stride_p = param.pool_stride;
+
+	//step4. 开始反向传播
+	for (int n_ = 0; n_ < n_x; ++n_)   //输出cube数
+	{
+		for (int c_ = 0; c_ < c_x; ++c_)  //输出通道数
+		{
+			for (int h_ = 0; h_ < h_x; ++h_)   //输出Blob的高
+			{
+				for (int w_ = 0; w_ < w_x; ++w_)   //输出Blob的宽
+				{
+					//(1). 获取掩码mask
+					mat window = (*cache[0])[n_](span(h_*param.pool_stride, h_*param.pool_stride + h_p - 1),
+												 span(w_*param.pool_stride, w_*param.pool_stride + w_p - 1),
+												 span(c_, c_));
+					double maxv = window.max();
+					mat mask = conv_to<mat>::from(maxv == window);  //"=="返回的是一个umat类型的矩阵！umat转换为mat
+					//(2). 计算梯度
+					(*gradient[0])[n_](span(h_*param.pool_stride, h_*param.pool_stride + h_p - 1),
+									   span(w_*param.pool_stride, w_*param.pool_stride + w_p - 1),
+									   span(c_, c_)) += mask * (*diff_in)[n_](h_, w_, c_);  //umat  -/-> mat
+				}
+			}
+			//(*diff_in)[0].slice(0).print("diff_in=");
+			//(*cache[0])[0].slice(0).print("cache=");  //mask
+			//(*gradient[0])[0].slice(0).print("gradient=");
+		}
+	}
+}
+
+
+
 void Relu::Init(const vector<int>&input_shape, vector<shared_ptr<Blob>>&data, const LayerParam param, const string name)
 {
 	cout << "Relu Init" << endl;
@@ -276,6 +403,31 @@ void Relu::forward(const vector<shared_ptr<Blob>>&in, shared_ptr<Blob>&out, cons
 	out->Max(0);
 	cout << "Relu forward" << endl;
 }
+
+void Relu::backward(const shared_ptr<Blob>& diff_in, const vector<shared_ptr<Blob>>& cache, vector<shared_ptr<Blob>>& gradient, const LayerParam& param)
+{
+	cout << "Relu backward" << endl;
+	//step1. 设置输出梯度Blob的尺寸（dX---grads[0]）
+	gradient[0].reset(new Blob(*cache[0]));
+
+	//step2. 获取掩码mask
+	int n_x = gradient[0]->GetN();
+	for (int n_ = 0; n_ < n_x; ++n_)
+	{
+		(*gradient[0])[n_].transform([](double e) {return e > 0 ? 1 : 0; });
+	}
+	(*gradient[0]) = (*gradient[0]) * (*diff_in);
+
+	//(*diff_in)[0].slice(0).print("diff_in=");				//输入梯度：打印第一个din的第一个矩阵
+	//(*cache[0])[0].slice(0).print("cache=");		//掩码： 打印第一个cache的第一个矩阵
+	//(*gradient[0])[0].slice(0).print("gradient=");		//输出梯度：打印第一个grads的第一个矩阵
+	return;
+}
+
+
+
+
+
 
 void Softmax::softmax_cross_entropy_with_logits(const vector<shared_ptr<Blob>>& in, double& loss, shared_ptr<Blob>& diff_out)
 {

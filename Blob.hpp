@@ -28,16 +28,20 @@ class Blob
 public: //构造函数：这个类通过调用构造函数来实例化对象
 	Blob() : n(0), c(0), w(0), h(0){}
 	Blob(const int n, const int c, const int w, const int h, int type = TDEFAULT) ;  //重载函数
+	Blob(const vector<int> shape_, int type = TDEFAULT);
 	Blob & operator*=(const double in);
 	Blob & operator=(const double in);
 	Blob SubBlob(int low_index, int high_index);
 	Blob Pad(int pad, double val = 0);
+	Blob DeletePad(int pad);
 	cube & operator[](int index);
+	friend Blob operator*(Blob& A, Blob& B);
 	int GetC();
 	int GetH();
 	int GetW();
 	int GetN();
 	vector<cube> &GetData();
+	vector<int> size() const;
 	void Print(string str);
 	void Max(double in = 0.0);
 	void Init(const int n, const int c, const int w, const int h, int type);

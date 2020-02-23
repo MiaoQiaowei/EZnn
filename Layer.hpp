@@ -35,10 +35,9 @@ public:
 	virtual	void Init(const vector<int>&input_shape, vector<shared_ptr<Blob>>&data, const LayerParam param, const string name) {};
 	virtual	void CalculateShape(const vector<int>&input_shape, vector<int>&out_shape, LayerParam param)=0;
 	virtual void forward(const vector<shared_ptr<Blob>>&in, shared_ptr<Blob>&out, const LayerParam &param)=0;
-
-private:
-
+	virtual void backward(const shared_ptr<Blob>& diff_in, const vector<shared_ptr<Blob>>& cache, vector<shared_ptr<Blob>>& gradient, const LayerParam& param) = 0;
 };
+
 
 class Conv:public Layer
 {
@@ -48,9 +47,10 @@ public:
 	void Init(const vector<int>&input_shape, vector<shared_ptr<Blob>>&data, const LayerParam param, const string name);
 	void CalculateShape(const vector<int>&input_shape, vector<int>&out_shape, LayerParam param);
 	void forward(const vector<shared_ptr<Blob>>&in, shared_ptr<Blob>&out, const LayerParam &param);
-private:
-
+	void backward(const shared_ptr<Blob>& diff_in, const vector<shared_ptr<Blob>>& cache, vector<shared_ptr<Blob>>& gradient, const LayerParam& param);
 };
+
+
 
 class Relu :public Layer
 {
@@ -60,8 +60,7 @@ public:
 	void Init(const vector<int>&input_shape, vector<shared_ptr<Blob>>&data, const LayerParam param, const string name);
 	void CalculateShape(const vector<int>&input_shape, vector<int>&out_shape, LayerParam param);
 	void forward(const vector<shared_ptr<Blob>>&in, shared_ptr<Blob>&out, const LayerParam &param);
-private:
-
+	void backward(const shared_ptr<Blob>& diff_in, const vector<shared_ptr<Blob>>& cache, vector<shared_ptr<Blob>>& gradient, const LayerParam& param);
 };
 
 
@@ -73,9 +72,10 @@ public:
 	void Init(const vector<int>&input_shape, vector<shared_ptr<Blob>>&data, const LayerParam param, const string name);
 	void CalculateShape(const vector<int>&input_shape, vector<int>&out_shape, LayerParam param);
 	void forward(const vector<shared_ptr<Blob>>&in, shared_ptr<Blob>&out, const LayerParam &param);
-private:
-
+	void backward(const shared_ptr<Blob>& diff_in, const vector<shared_ptr<Blob>>& cache, vector<shared_ptr<Blob>>& gradient, const LayerParam& param);
 };
+
+
 
 class Pool :public Layer
 {
@@ -85,14 +85,17 @@ public:
 	void Init(const vector<int>&input_shape, vector<shared_ptr<Blob>>&data, const LayerParam param, const string name);
 	void CalculateShape(const vector<int>&input_shape, vector<int>&out_shape, LayerParam param);
 	void forward(const vector<shared_ptr<Blob>>&in, shared_ptr<Blob>&out, const LayerParam &param);
-private:
-
+	void backward(const shared_ptr<Blob>& diff_in, const vector<shared_ptr<Blob>>& cache, vector<shared_ptr<Blob>>& gradient, const LayerParam& param);
 };
+
+
 
 class Softmax
 {
 public:
 	static void softmax_cross_entropy_with_logits(const vector<shared_ptr<Blob>>& in, double& loss, shared_ptr<Blob>& diff_out);
 };
+
+
 
 #endif  //__LAYER_HPP__
