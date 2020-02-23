@@ -19,7 +19,7 @@ struct NetParam      //c++ÖĞ£¬struct¸úclassÓÃ·¨»ù±¾Ò»ÖÂ£¡Ö÷ÒªÇø±ğÊÇ¼Ì³ĞºóµÄÊı¾İ·
 	/*Ñ§Ï°ÂÊË¥¼õÏµÊı*/
 	double lr_decay;
 	/*ÓÅ»¯Ëã·¨,:sgd/momentum/rmsprop*/
-	std::string update;
+	string optimizer;
 	/*momentumÏµÊı */
 	double momentum;
 	/*epoch´ÎÊı */
@@ -54,9 +54,15 @@ class Net
 public:
 	Net(){};
 	double loss;
+	double train_accu_;
+	double val_accu_;
 	void Init(NetParam &net, vector<shared_ptr<Blob>> &train, vector<shared_ptr<Blob>> &val);
 	void Train(NetParam &net_param);
-	void TrainWithBatch(shared_ptr<Blob> & images, shared_ptr<Blob> & labels, NetParam &param);
+	void TrainWithBatch(shared_ptr<Blob> & images, shared_ptr<Blob> & labels, NetParam &param, string mode = "TRAIN");
+	//void OptimizerWithBatch(NetParam & param);
+	void OptimizerWithBatch(NetParam& param);
+	void EvaluateWithBatch(NetParam& param);
+	double CalculateAccuracy(Blob& in, Blob& predict);
 
 private:
 	shared_ptr<Blob>images_train;

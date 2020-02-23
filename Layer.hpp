@@ -76,7 +76,6 @@ public:
 };
 
 
-
 class Pool :public Layer
 {
 public:
@@ -88,14 +87,10 @@ public:
 	void backward(const shared_ptr<Blob>& diff_in, const vector<shared_ptr<Blob>>& cache, vector<shared_ptr<Blob>>& gradient, const LayerParam& param);
 };
 
-
-
 class Softmax
 {
 public:
 	static void softmax_cross_entropy_with_logits(const vector<shared_ptr<Blob>>& in, double& loss, shared_ptr<Blob>& diff_out);
 };
-
-
 
 #endif  //__LAYER_HPP__

@@ -20,7 +20,7 @@ void NetParam::readNetParam(string file)
 			auto &tparam = value["train"];                             //通过引用方式，可以拿到“train”对象里面的所有元素
 			this->lr = tparam["learning rate"].asDouble();             //解析成Double类型存放
 			this->lr_decay = tparam["lr decay"].asDouble();
-			this->update = tparam["update method"].asString();         //解析成String类型存放
+			this->optimizer = tparam["optimizer"].asString();         //解析成String类型存放
 			this->momentum = tparam["momentum parameter"].asDouble();
 			this->num_epochs = tparam["num epochs"].asInt();           //解析成Int类型存放
 			this->use_batch = tparam["use batch"].asBool();            //解析成Bool类型存放
@@ -148,7 +148,7 @@ void Net::Train(NetParam & net_param)
 	int per_epoch = total_num / batch_num;//单个批次中有多少组batch
 	int total_batch_num = per_epoch * batch_num;//一共要训练多少组batch的数据
 	cout << "total_batch_num: " << total_batch_num << endl;
-	for (int i = 0; i < 1; i++)
+	for (int i = 0; i < 40; i++)
 	{
 		shared_ptr<Blob>images_batch;
 		shared_ptr<Blob>labels_batch;
@@ -158,13 +158,20 @@ void Net::Train(NetParam & net_param)
 	
 		/*训练*/
 		TrainWithBatch(images_batch, labels_batch, net_param);
+		//cout <<"iter:  "<<i<< "  loss: " << loss << endl;
 
-		/*参数更新*/
-		/*评估当前准确率*/
+		///*参数更新*/
+		///*评估当前准确率*/
+		//----------step2. 用该mini-batch训练网络模型
+
+		//----------step3. 评估模型当前准确率（训练集和验证集）
+		EvaluateWithBatch(net_param);
+		printf("iter_%d    lr: %0.6f    loss: %f    train_acc: %0.2f%%    val_acc: %0.2f%%\n",
+			i, net_param.lr, loss, train_accu_ * 100, val_accu_ * 100);
 	}
 }
 
-void Net::TrainWithBatch(shared_ptr<Blob> & images, shared_ptr<Blob> & labels, NetParam &param)
+void Net::TrainWithBatch(shared_ptr<Blob> & images, shared_ptr<Blob> & labels, NetParam &param,string mode)
 {
 	/*填入X*/
 	data[layer_names[0]][0] = images;
@@ -177,21 +184,93 @@ void Net::TrainWithBatch(shared_ptr<Blob> & images, shared_ptr<Blob> & labels, N
 	{
 		string name = layer_names[i];
 		shared_ptr<Blob>out;
-		cout << "name : " << name <<endl;
 		p_layers[name]->forward(data[name],out,param.layer_params[name]);
 		data[layer_names[i+1]][0] = out;
 	}
+	if (mode == "TEST")
+		return;
 	
-	
-	/*计算损失*/
+	/*计算交叉熵损失*/
 	Softmax::softmax_cross_entropy_with_logits(data[layer_names.back()], loss, diff[layer_names.back()][0]);
-	cout << "loss: " << loss << endl;
-
+	
 	/*反向传播*/
-
 	for (int i = n - 2; i >= 0; --i)
 	{
 		string name = layer_names[i];
 		p_layers[name]->backward(diff[layer_names[i + 1]][0], data[name], diff[name], param.layer_params[name]);
 	}
+
+	/*参数更新*/
+	OptimizerWithBatch(param);
+}
+
+
+void Net::OptimizerWithBatch(NetParam& param)
+{
+	for (auto name : layer_names)    //for lname in layers_
+	{
+		//(1).跳过没有w和b的层
+		if (!data[name][1] || !data[name][2])
+		{
+			continue;  //跳过本轮循环，重新执行循环（注意不是像break那样直接跳出循环）
+		}
+
+		//(2).利用梯度下降更新有w和b的层
+		for (int i = 1; i < 2; ++i)
+		{
+			assert(param.optimizer == "sgd" || param.optimizer == "momentum" || param.optimizer == "rmsprop");//sgd/momentum/rmsprop
+			//w:=w-param.lr*dw ;    b:=b-param.lr*db     ---->  "sgd"
+			shared_ptr<Blob> temp(new Blob(data[name][i]->size(), TZEROS));
+			(*temp) = -param.lr * (*diff[name][i]);
+			(*data[name][i]) = (*data[name][i]) + (*temp);
+		}
+	}
+	//学习率更新
+	if (param.lr_update)
+		param.lr *= param.lr_decay;
+}
+
+void Net::EvaluateWithBatch(NetParam& param)
+{
+	//(1).评估训练集准确率
+	shared_ptr<Blob> X_train_subset;
+	shared_ptr<Blob> Y_train_subset;
+	int N = images_train->GetN();
+	if (N > 1000)
+	{
+		X_train_subset.reset(new Blob(images_train->SubBlob(0, 1000)));
+		Y_train_subset.reset(new Blob(labels_train->SubBlob(0, 1000)));
+	}
+	else
+	{
+		X_train_subset = images_train;
+		Y_train_subset = labels_train;
+	}
+	TrainWithBatch(X_train_subset, Y_train_subset, param, "TEST");  //“TEST”，测试模式，只进行前向传播
+	train_accu_ = CalculateAccuracy(*data[layer_names.back()][1], *data[layer_names.back()][0]);
+
+	//(2).评估验证集准确率
+	TrainWithBatch(images_val, labels_val, param, "TEST");  //“TEST”，测试模式，只进行前向传播
+	val_accu_ = CalculateAccuracy(*data[layer_names.back()][1], *data[layer_names.back()][0]);
+}
+
+double Net::CalculateAccuracy(Blob& in, Blob& predict)
+{
+	//(1). 确保两个输入Blob尺寸一样
+	vector<int> size_in = in.size();
+	vector<int> size_p = predict.size();
+	for (int i = 0; i < 4; ++i)
+	{
+		assert(size_in[i] == size_p[i]);  //断言：两个输入Blob的尺寸（N,C,H,W）一样！
+	}
+	//(2). 遍历所有cube（样本），找出标签值Y和预测值Predict最大值所在位置进行比较，若一致，则正确个数+1
+	int n_in = in.GetN();  //总样本数
+	int right_cnt = 0;  //正确个数
+	for (int n_ = 0; n_ < n_in; ++n_)
+	{
+		//参考网址：http://arma.sourceforge.net/docs.html#index_min_and_index_max_member
+		if (in[n_].index_max() == predict[n_].index_max())
+			right_cnt++;
+	}
+	return (double)right_cnt / (double)n_in;   //计算准确率，返回（准确率=正确个数/总样本数）
 }

@@ -4,15 +4,15 @@
 	//json中，对象的元素是“键值对”
 	"train":{
 		// 初始学习率
-        "learning rate" : 0.001,
+        "learning rate" : 0.05,
         // 学习率衰减: 通常设置为 0.99
-        "lr decay": 0.99,
-        // 更新策略: sgd/momentum/rmsprop/adagrad
-        "update method": "momentum",
+        "lr decay": 0.999,
+        // 优化策略: sgd/momentum/rmsprop
+        "optimizer": "sgd",
         // 如果想使用添加动量的梯度下降算法做优化,需要设置这一项，通常设置为 0.9/0.95 即可，一般不需要调整
-        "momentum parameter": 0.95,
+        "momentum coefficient": 0.95,
         // 全部样本训练一遍就是一个epoch
-        "num epochs": 2,
+        "num epochs": 1,
         // 是否使用mini-batch梯度下降算法做优化？ true/false
         "use batch": true,
         // batch size

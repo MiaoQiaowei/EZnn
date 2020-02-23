@@ -149,10 +149,6 @@ void Blob::Max(double in)
 Blob Blob::DeletePad(int pad)
 {
 	assert(!blob_data.empty());   //断言：Blob自身不为空
-	//int N_ = n;
-	//int C_ = c;
-	//int  W_ = w;
-	//int H_ = h;
 	Blob out(n, c, w - 2 * pad, h - 2 * pad);
 	for (int n_ = 0; n_ < n; ++n_)
 	{
@@ -207,13 +203,42 @@ int Blob::GetH()
 {
 	return h;
 }
-
 int Blob::GetW() 
 {
 	return w;
 }
-
 int Blob::GetN()
 {
 	return n;
+}
+
+Blob operator*(double lr, Blob& b_)
+{
+	//遍历所有的cube，每一个cube做对应位置相乘（cube % cube）
+	int n_get = b_.GetN();
+	Blob out(b_.size());
+	for (int i = 0; i < n_get; ++i)
+	{
+		out[i] = lr * b_[i];
+	}
+	return out;
+}
+
+Blob operator+(Blob& a_, Blob& b_)
+{
+	//确保两个输入Blob尺寸一样
+	vector<int> a_size = a_.size();
+	vector<int> b_size = b_.size();
+	for (int i = 0; i < 4; ++i)
+	{
+		assert(a_size[i] == b_size[i]);  //断言：两个输入Blob的尺寸（N,C,H,W）一样！
+	}
+	//遍历所有的cube，每一个cube做对应位置相乘（cube % cube）
+	int n_get = a_size[0];
+	Blob out(a_.size());
+	for (int i = 0; i < n_get; ++i)
+	{
+		out[i] = a_[i] + b_[i];
+	}
+	return out;
 }

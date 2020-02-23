@@ -1,8 +1,8 @@
-#include "Net.hpp"
-#include "Blob.hpp"
 #include <iostream>
 #include <string>
 #include <memory>
+#include "Net.hpp"
+#include "Blob.hpp"
 #include "Mnist.h"
 
 using namespace std;

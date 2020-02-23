@@ -1,6 +1,6 @@
-#include"Layer.hpp"
 #include <cassert>
 #include<opencv2/opencv.hpp>
+#include"Layer.hpp"
 
 using namespace std;
 using namespace arma;
@@ -24,8 +24,6 @@ void Conv::Init(const vector<int>&input_shape, vector<shared_ptr<Blob>>&data, co
 		data[2].reset(new Blob(kernel_num, 1, 1, 1, TRANDN));
 		(*data[2]) *= 1e-2;
 	}
-
-	cout << "Conv Init" << endl;
 	return;
 }
 
@@ -59,7 +57,6 @@ void Conv::CalculateShape(const vector<int>&input_shape, vector<int>&out_shape, 
 
 void Conv::forward(const vector<shared_ptr<Blob>>&in, shared_ptr<Blob>&out, const LayerParam &param)
 {
-	cout << "Conv forward" << endl;
 	
 	if (out)
 		out.reset();
@@ -105,7 +102,6 @@ void Conv::forward(const vector<shared_ptr<Blob>>&in, shared_ptr<Blob>&out, cons
 
 void Conv::backward(const shared_ptr<Blob>& diff_in, const vector<shared_ptr<Blob>>& cache, vector<shared_ptr<Blob>>& gradient, const LayerParam& param)
 {
-	cout << "Conv backward" << endl;
 	
 	//step1. 设置输出梯度Blob的尺寸（dX---grads[0]）
 	gradient[0].reset(new Blob(cache[0]->size(), TZEROS));
@@ -183,8 +179,6 @@ void Fc::Init(const vector<int>&input_shape, vector<shared_ptr<Blob>>&data, cons
 		data[2].reset(new Blob(kernel_num, 1, 1, 1, TRANDN));
 		(*data[2]) *= 1e-2;
 	}
-
-	cout << "Fc Init" << endl;
 	return;
 }
 
@@ -205,7 +199,6 @@ void Fc::CalculateShape(const vector<int>&input_shape, vector<int>&out_shape, La
 
 void Fc::forward(const vector<shared_ptr<Blob>>&in, shared_ptr<Blob>&out, const LayerParam &param)
 {
-	cout << "Fc forward" << endl;
 	if (out)
 		out.reset();
 
@@ -239,7 +232,6 @@ void Fc::forward(const vector<shared_ptr<Blob>>&in, shared_ptr<Blob>&out, const 
 
 void Fc::backward(const shared_ptr<Blob>& diff_in, const vector<shared_ptr<Blob>>& cache, vector<shared_ptr<Blob>>& gradient, const LayerParam& param)
 {
-	cout << "Fc backward" << endl;
 	gradient[0].reset(new Blob(cache[0]->size(), TZEROS));
 	gradient[1].reset(new Blob(cache[1]->size(), TZEROS));
 	gradient[2].reset(new Blob(cache[2]->size(), TZEROS));
@@ -267,7 +259,6 @@ void Fc::backward(const shared_ptr<Blob>& diff_in, const vector<shared_ptr<Blob>
 
 void Pool::Init(const vector<int>&input_shape, vector<shared_ptr<Blob>>&data, const LayerParam param, const string name)
 {
-	cout << "Pool Init" << endl;
 	return;
 }
 
@@ -299,7 +290,6 @@ void Pool::CalculateShape(const vector<int>&input_shape, vector<int>&out_shape, 
 
 void Pool::forward(const vector<shared_ptr<Blob>>&in, shared_ptr<Blob>&out, const LayerParam &param)
 {
-	cout << "Pool forward" << endl;
 	if (out)
 		out.reset();
 
@@ -339,7 +329,7 @@ void Pool::forward(const vector<shared_ptr<Blob>>&in, shared_ptr<Blob>&out, cons
 
 void Pool::backward(const shared_ptr<Blob>& diff_in, const vector<shared_ptr<Blob>>& cache, vector<shared_ptr<Blob>>& gradient, const LayerParam& param)
 {
-	cout << "Pool  backward " << endl;
+
 	//step1. 设置输出梯度Blob的尺寸（dX---grads[0]）
 	gradient[0].reset(new Blob(cache[0]->size(), TZEROS));
 	//step2. 获取输入梯度Blob的尺寸（din）
@@ -385,7 +375,6 @@ void Pool::backward(const shared_ptr<Blob>& diff_in, const vector<shared_ptr<Blo
 
 void Relu::Init(const vector<int>&input_shape, vector<shared_ptr<Blob>>&data, const LayerParam param, const string name)
 {
-	cout << "Relu Init" << endl;
 	return;
 }
 
@@ -401,12 +390,10 @@ void Relu::forward(const vector<shared_ptr<Blob>>&in, shared_ptr<Blob>&out, cons
 		out.reset();
 	out.reset( new Blob(*in[0]));
 	out->Max(0);
-	cout << "Relu forward" << endl;
 }
 
 void Relu::backward(const shared_ptr<Blob>& diff_in, const vector<shared_ptr<Blob>>& cache, vector<shared_ptr<Blob>>& gradient, const LayerParam& param)
 {
-	cout << "Relu backward" << endl;
 	//step1. 设置输出梯度Blob的尺寸（dX---grads[0]）
 	gradient[0].reset(new Blob(*cache[0]));
 
@@ -431,7 +418,6 @@ void Relu::backward(const shared_ptr<Blob>& diff_in, const vector<shared_ptr<Blo
 
 void Softmax::softmax_cross_entropy_with_logits(const vector<shared_ptr<Blob>>& in, double& loss, shared_ptr<Blob>& diff_out)
 {
-	cout << "Softmax..." << endl;
 	if (diff_out)
 		diff_out.reset();
 

@@ -8,8 +8,8 @@ using std::string;
 
 /*
 Blob是数据流，他的作用是将数据集全部读入到内存当中。
-Blob（   n   ，  c  ，h，w ）
-     (样本数目，通道数，高，宽)
+Blob（   n   ，  c  ，w,  h ）
+     (样本数目，通道数，宽，高)
 Blob整体是由一个名为Blob的cube类型的vector数组存储
 */
 
@@ -36,6 +36,8 @@ public: //构造函数：这个类通过调用构造函数来实例化对象
 	Blob DeletePad(int pad);
 	cube & operator[](int index);
 	friend Blob operator*(Blob& A, Blob& B);
+	friend Blob operator*(double lr, Blob& B);
+	friend Blob operator+(Blob& a_, Blob& b_);
 	int GetC();
 	int GetH();
 	int GetW();

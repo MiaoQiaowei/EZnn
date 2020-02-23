@@ -49,6 +49,8 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Model.json" />
+    <None Include="Model.json">
+      <Filter>资源文件</Filter>
+    </None>
   </ItemGroup>
 </Project>
