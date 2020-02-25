@@ -167,7 +167,7 @@ void Net::Train(NetParam & net_param)
 		//----------step3. 评估模型当前准确率（训练集和验证集）
 		EvaluateWithBatch(net_param);
 		printf("iter_%d    lr: %0.6f    loss: %f    train_acc: %0.2f%%    val_acc: %0.2f%%\n",
-			i, net_param.lr, loss, train_accu_ * 100, val_accu_ * 100);
+			i, net_param.lr, loss, train_accu * 100, val_accu * 100);
 	}
 }
 
