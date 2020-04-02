@@ -247,11 +247,11 @@ void Net::EvaluateWithBatch(NetParam& param)
 		Y_train_subset = labels_train;
 	}
 	TrainWithBatch(X_train_subset, Y_train_subset, param, "TEST");  //“TEST”，测试模式，只进行前向传播
-	train_accu_ = CalculateAccuracy(*data[layer_names.back()][1], *data[layer_names.back()][0]);
+	train_accu = CalculateAccuracy(*data[layer_names.back()][1], *data[layer_names.back()][0]);
 
 	//(2).评估验证集准确率
 	TrainWithBatch(images_val, labels_val, param, "TEST");  //“TEST”，测试模式，只进行前向传播
-	val_accu_ = CalculateAccuracy(*data[layer_names.back()][1], *data[layer_names.back()][0]);
+	val_accu = CalculateAccuracy(*data[layer_names.back()][1], *data[layer_names.back()][0]);
 }
 
 double Net::CalculateAccuracy(Blob& in, Blob& predict)

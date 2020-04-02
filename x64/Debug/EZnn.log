@@ -1,2 +1,14 @@
 ﻿  Net.cpp
-  EZnn.vcxproj -> D:\github\EZnn\x64\Debug\EZnn.exe
+  Mnist.cpp
+  mainCopy.cpp
+  Layer.cpp
+D:\SOFTWARE\github\EZnn\EZnn\include\opencv2/core/mat.hpp(1965): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+D:\SOFTWARE\github\EZnn\EZnn\include\opencv2/core/persistence.hpp : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+D:\SOFTWARE\github\EZnn\EZnn\include\opencv2/core/utility.hpp : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+  Blob.cpp
+  main.cpp
+  正在生成代码...
+lib_json.lib(json_reader.obj) : warning LNK4099: 未找到 PDB“vc120.pdb”(使用“lib_json.lib(json_reader.obj)”或在“D:\SOFTWARE\github\EZnn\x64\Debug\vc120.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+lib_json.lib(json_value.obj) : warning LNK4099: 未找到 PDB“vc120.pdb”(使用“lib_json.lib(json_value.obj)”或在“D:\SOFTWARE\github\EZnn\x64\Debug\vc120.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+lib_json.lib(json_writer.obj) : warning LNK4099: 未找到 PDB“vc120.pdb”(使用“lib_json.lib(json_writer.obj)”或在“D:\SOFTWARE\github\EZnn\x64\Debug\vc120.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+  EZnn.vcxproj -> D:\SOFTWARE\github\EZnn\x64\Debug\EZnn.exe
